@@ -32,75 +32,102 @@
         .page { display: none; opacity: 0; transform: translateY(5px); transition: opacity 0.2s ease, transform 0.2s ease; }
         .page.active { display: block; opacity: 1; transform: translateY(0); }
         .btn-press:active { transform: scale(0.96); transition: transform 0.1s; }
-        
-        /* Checkbox & Badges */
         .quest-checkbox:checked + div { text-decoration: line-through; color: #10b981; opacity: 0.7; }
         .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* --- ESCENA OFICINA (CSS ART) --- */
-        .room-container {
-            position: relative;
-            width: 100%;
-            height: 240px;
-            background: #f1f5f9;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            border: 1px solid #cbd5e1;
-            perspective: 500px;
-        }
-        /* Suelo */
-        .room-floor {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 80px;
-            background: #e2e8f0;
-            border-top: 1px solid #cbd5e1;
-        }
-        /* Mesa (Dibujada con CSS para solidez) */
-        .room-desk {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 140px;
-            height: 10px;
-            background: #475569;
-            border-radius: 4px;
-            z-index: 20;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .room-desk::before { /* Patas */
-            content: ''; position: absolute; top: 10px; left: 10px; width: 5px; height: 60px; background: #334155;
-        }
-        .room-desk::after { /* Patas */
-            content: ''; position: absolute; top: 10px; right: 10px; width: 5px; height: 60px; background: #334155;
-        }
-
-        /* Objetos (Posicionamiento Absoluto Estricto) */
-        .obj { position: absolute; transition: all 0.5s; font-size: 2rem; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1)); }
-        
-        .obj-window { top: 20px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; opacity: 0.9; }
-        .obj-rug { bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 4.5rem; z-index: 1; opacity: 0.8; }
-        .obj-chair { bottom: 35px; left: 50%; transform: translateX(-50%); font-size: 3rem; z-index: 5; } /* Delante mesa */
-        .obj-laptop { bottom: 48px; left: 50%; transform: translateX(-50%); font-size: 1.8rem; z-index: 25; } /* Encima mesa */
-        .obj-plant { bottom: 30px; left: 20px; font-size: 3.5rem; z-index: 10; }
-        .obj-lamp { bottom: 48px; left: 35%; font-size: 2rem; z-index: 25; }
-        .obj-coffee { bottom: 48px; right: 35%; font-size: 1.2rem; z-index: 25; }
-        .obj-books { bottom: 0px; right: 10px; font-size: 2.5rem; z-index: 15; }
-        .obj-cat { bottom: 48px; right: 20%; font-size: 1.5rem; z-index: 25; } /* Sobre mesa */
-        .obj-frame { top: 40px; left: 20px; font-size: 2.5rem; }
-
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        
-        /* ZONA ZEN */
+        /* --- ZONA ZEN --- */
         .breath-circle { transition: transform 4s ease-in-out, background-color 0.5s, border-color 0.5s; }
         .inhale { transform: scale(1.5); border-color: #3b82f6; background-color: #eff6ff; }
         .hold { transform: scale(1.5); border-color: #eab308; background-color: #fefce8; }
         .exhale { transform: scale(1.0); border-color: #10b981; background-color: #f0fdf4; transition-duration: 8s; }
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
+
+        /* --- OFICINA VIRTUAL PRO (CSS SCENE) --- */
+        .room-scene {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            background: #e2e8f0; /* Color pared base */
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        
+        /* Pared y Ventana */
+        .room-wall {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 75%;
+            background: #f1f5f9;
+            z-index: 0;
+        }
+        .room-window {
+            position: absolute;
+            top: 20px; left: 50%; transform: translateX(-50%);
+            width: 100px; height: 80px;
+            background: #1e293b; /* Noche por defecto */
+            border: 4px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            transition: background 1s;
+        }
+        .room-window.day { background: #bfdbfe; box-shadow: inset 0 0 10px rgba(255,255,255,0.5); } /* Día */
+        .room-window::after { /* Marco cruz */
+            content: ''; position: absolute; top: 0; left: 50%; width: 4px; height: 100%; background: #cbd5e1; transform: translateX(-50%);
+        }
+        .room-window::before { /* Marco cruz */
+            content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 4px; background: #cbd5e1; transform: translateY(-50%); z-index: 1;
+        }
+
+        /* Suelo */
+        .room-floor {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 25%;
+            background: #d6bcfa; /* Color alfombra base o madera */
+            background: repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #cbd5e1 10px, #cbd5e1 20px); /* Parquet falso */
+            z-index: 1;
+            border-top: 2px solid #94a3b8;
+        }
+
+        /* Muebles (CSS Shapes + Emojis positions) */
+        .desk-base {
+            position: absolute;
+            bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 160px; height: 80px;
+            z-index: 10;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .desk-top {
+            width: 100%; height: 12px;
+            background: #475569;
+            border-radius: 4px;
+            position: absolute; top: 0; left: 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+        .desk-leg-l { position: absolute; top: 12px; left: 15px; width: 8px; height: 68px; background: #334155; }
+        .desk-leg-r { position: absolute; top: 12px; right: 15px; width: 8px; height: 68px; background: #334155; }
+
+        /* Items específicos */
+        .item { position: absolute; transition: all 0.5s ease; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15)); opacity: 0; transform: translateY(20px); }
+        .item.visible { opacity: 1; transform: translateY(0); }
+
+        .i-chair { bottom: 35px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; z-index: 5; } /* Detrás mesa */
+        .i-rug { bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 4rem; z-index: 2; opacity: 0.7; }
+        .i-plant { bottom: 25px; left: 15px; font-size: 4rem; z-index: 20; }
+        .i-laptop { bottom: 78px; left: 50%; transform: translateX(-50%); font-size: 2.2rem; z-index: 15; }
+        .i-lamp { bottom: 78px; left: 30px; font-size: 2.5rem; z-index: 15; }
+        .i-books { bottom: 78px; right: 35px; font-size: 1.5rem; z-index: 15; }
+        .i-cat { bottom: 75px; right: 55px; font-size: 1.8rem; z-index: 16; }
+        .i-coffee { bottom: 78px; right: 20px; font-size: 1.2rem; z-index: 16; }
+
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body class="bg-thac-bg text-slate-800 h-[100dvh] flex flex-col overflow-hidden selection:bg-blue-200">
@@ -132,9 +159,35 @@
                 </div>
             </div>
 
-            <div class="room-container mb-6" id="office-container">
+            <div class="room-scene mb-6" id="office-container">
+                <div class="room-wall"></div>
+                <div class="room-window" id="room-window"></div>
                 <div class="room-floor"></div>
-                <div class="room-desk"></div> </div>
+                
+                <div class="item i-rug">🧶</div>
+                <div class="item i-plant">🌿</div>
+                <div class="item i-chair">💺</div>
+                
+                <div class="desk-base">
+                    <div class="desk-top"></div>
+                    <div class="desk-leg-l"></div>
+                    <div class="desk-leg-r"></div>
+                </div>
+
+                <div class="item i-laptop">💻</div>
+                <div class="item i-lamp">💡</div>
+                <div class="item i-books">📚</div>
+                <div class="item i-coffee">☕</div>
+                <div class="item i-cat">🐈</div>
+            </div>
+
+            <button onclick="navTo('study')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press mb-6 group">
+                <div class="text-left">
+                    <div class="text-blue-100 text-xs font-bold uppercase mb-1">Objetivo Diario</div>
+                    <div class="text-2xl font-bold">Fichar Estudio 📝</div>
+                </div>
+                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
+            </button>
 
             <div class="mb-4">
                 <button onclick="toggleQuests()" class="w-full flex justify-between items-center text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70 focus:outline-none">
@@ -148,14 +201,6 @@
                 <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Logros</h2>
                 <div id="badges-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
             </div>
-
-            <button onclick="navTo('study')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press group mt-4">
-                <div class="text-left">
-                    <div class="text-blue-100 text-xs font-bold uppercase mb-1">Objetivo Diario</div>
-                    <div class="text-2xl font-bold">Fichar Estudio 📝</div>
-                </div>
-                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
-            </button>
             
             <div class="h-10"></div>
         </div>
@@ -199,15 +244,13 @@
         </div>
 
         <div id="page-dates" class="page">
-            <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Nuestros Planes</h2>
-            
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-slate-800 text-lg">🌟 Muro de los Porqués</h3>
+            <div class="flex justify-between items-center mb-4 mt-2">
+                <h2 class="text-2xl font-bold text-slate-900">Nuestros Planes</h2>
                 <button onclick="addPlan()" class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs font-bold btn-press shadow-sm hover:bg-blue-200 transition">+ Nuevo</button>
             </div>
             <div id="plans-container" class="space-y-3 mb-8"></div>
 
-            <h3 class="font-bold text-slate-800 text-lg mb-4">⏳ Cuenta Atrás THAC</h3>
+            <h3 class="font-bold text-slate-800 text-lg mb-4">⏳ Hitos de la Opo</h3>
             <div id="countdown-container" class="space-y-4"></div>
             
             <div class="h-10"></div>
@@ -250,7 +293,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v17_cozy'; 
+        const DATA_KEY = 'thac_app_v18_final_layout'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -292,7 +335,7 @@
             badges: [], 
             history: [],
             quests: { date: '', items: [] },
-            plans: [], // [{id, title, icon, date}]
+            plans: [], 
             cookie: { date: '', msg: '' }
         };
         let studyChartInstance = null;
@@ -342,25 +385,34 @@
 
         // --- OFFICE LOGIC (SCENE) ---
         function renderOffice() {
-            const room = document.getElementById('office-container');
-            let html = '<div class="room-floor"></div><div class="room-desk"></div>';
             const c = appData.coins;
+            // Selectores
+            const win = document.querySelector('.room-window');
+            const items = document.querySelectorAll('.item');
             
-            // OBJETOS POSICIONADOS
-            if(c >= 1) html += `<div class="obj obj-rug">🧶</div>`;
-            if(c >= 5) html += `<div class="obj obj-plant">🌿</div>`;
-            if(c >= 10) html += `<div class="obj obj-chair">🛋️</div>`;
-            if(c >= 15) html += `<div class="obj obj-window">🪟</div>`;
-            if(c >= 20) html += `<div class="obj obj-laptop">💻</div>`;
-            if(c >= 25) html += `<div class="obj obj-lamp">💡</div>`;
-            if(c >= 30) html += `<div class="obj obj-coffee">☕</div>`;
-            if(c >= 40) html += `<div class="obj obj-books">📚</div>`;
-            if(c >= 50) html += `<div class="obj obj-cat">🐈</div>`;
-            if(c >= 60) html += `<div class="obj obj-frame">🖼️</div>`;
+            // Lógica Día/Noche
+            const hour = new Date().getHours();
+            if(hour > 7 && hour < 20) win.classList.add('day'); else win.classList.remove('day');
+
+            // Mostrar items según monedas (CSS Opacity)
+            // c >= 1 -> Rug
+            // c >= 5 -> Plant
+            // c >= 10 -> Chair
+            // c >= 15 -> (Ya está ventana)
+            // c >= 20 -> Laptop
+            // c >= 25 -> Lamp
+            // c >= 30 -> Coffee
+            // c >= 40 -> Books
+            // c >= 50 -> Cat
             
-            if(c === 0) html += `<div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm font-bold opacity-50 pointer-events-none">Estudia para decorar tu despacho</div>`;
-            
-            room.innerHTML = html;
+            if(c >= 1) document.querySelector('.i-rug').classList.add('visible');
+            if(c >= 5) document.querySelector('.i-plant').classList.add('visible');
+            if(c >= 10) document.querySelector('.i-chair').classList.add('visible');
+            if(c >= 20) document.querySelector('.i-laptop').classList.add('visible');
+            if(c >= 25) document.querySelector('.i-lamp').classList.add('visible');
+            if(c >= 30) document.querySelector('.i-coffee').classList.add('visible');
+            if(c >= 40) document.querySelector('.i-books').classList.add('visible');
+            if(c >= 50) document.querySelector('.i-cat').classList.add('visible');
         }
 
         // --- PLANS LOGIC ---
@@ -368,7 +420,7 @@
             const container = document.getElementById('plans-container');
             container.innerHTML = '';
             if(appData.plans.length === 0) {
-                container.innerHTML = `<div class="text-center text-slate-400 text-xs py-4 border-2 border-dashed border-slate-200 rounded-xl">Añade aquí tus sueños post-plaza</div>`;
+                container.innerHTML = `<div class="text-center text-slate-400 text-xs py-4 border-2 border-dashed border-slate-200 rounded-xl">Añade aquí tus sueños</div>`;
                 return;
             }
             const today = new Date();
@@ -394,7 +446,7 @@
 
         function addPlan() {
             Swal.fire({
-                title: 'Nuevo Plan',
+                title: 'Nuevo Sueño',
                 html: `<div class="flex flex-col gap-3"><input id="plan-title" class="swal2-input m-0 w-full" placeholder="Título (Ej: Japón)"><div class="flex gap-2"><input id="plan-icon" class="swal2-input m-0 w-1/4 text-center" placeholder="Emoji" value="✈️"><input id="plan-date" type="date" class="swal2-input m-0 w-3/4"></div></div>`,
                 showCancelButton: true, confirmButtonText: 'Guardar', confirmButtonColor: '#0f172a'
             }).then((result) => {
