@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="color-scheme" content="light only">
-    <meta name="theme-color" content="#ffffff">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="THAC App">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="color-scheme" content="light only">
+    
     <title>THAC Companion</title>
     
     <link rel="manifest" href="manifest.json">
@@ -47,7 +50,7 @@
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* BONSÁI ANIMADO (MOVIMIENTO DINÁMICO) */
+        /* BONSÁI ANIMADO (Dinámico y Vivo) */
         .foliage-sway {
             transform-origin: center 85%; 
             transform-box: fill-box; 
@@ -99,7 +102,8 @@
             </div>
 
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 mb-4 h-48 p-4 flex flex-col items-center justify-center relative overflow-hidden">
-                <div id="bonsai-container" class="w-full h-full flex items-center justify-center"></div>
+                <div id="bonsai-container" class="w-full h-full flex items-center justify-center">
+                    </div>
                 <div class="absolute top-3 left-4 bg-green-50 text-green-800 px-3 py-1 rounded-full text-[10px] font-extrabold border border-green-100 flex items-center gap-1 shadow-sm uppercase tracking-wider">
                     <span>🌱</span> <span id="bonsai-level-text">Semilla</span>
                 </div>
@@ -110,7 +114,9 @@
                     <div class="text-blue-100 text-xs font-bold uppercase mb-1">Objetivo Diario</div>
                     <div class="text-2xl font-bold">Fichar Estudio 📝</div>
                 </div>
-                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
+                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
             </button>
 
             <div class="mb-4">
@@ -131,6 +137,7 @@
 
         <div id="page-study" class="page">
             <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Registro Diario</h2>
+            
             <div id="study-panel" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-8">
                 <div id="study-form">
                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Materia (Opcional)</label>
@@ -145,7 +152,9 @@
                         </select>
                         <div class="absolute right-4 top-4 pointer-events-none text-slate-400">▼</div>
                     </div>
-                    <button onclick="confirmStudy()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-300 btn-press">CONFIRMAR SESIÓN</button>
+                    <button onclick="confirmStudy()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-300 btn-press">
+                        CONFIRMAR SESIÓN
+                    </button>
                 </div>
                 <div id="study-done" class="hidden text-center py-4">
                     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl animate-bounce">🛡️</div>
@@ -153,10 +162,13 @@
                     <p id="done-msg" class="text-slate-500 text-sm mt-1">Buen trabajo hoy.</p>
                 </div>
             </div>
+
             <h3 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Distribución</h3>
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative">
                 <canvas id="studyChart"></canvas>
-                <div id="no-data-msg" class="absolute inset-0 flex items-center justify-center bg-white/80 text-sm text-slate-400">Ficha tu primer día para ver datos</div>
+                <div id="no-data-msg" class="absolute inset-0 flex items-center justify-center bg-white/80 text-sm text-slate-400">
+                    Ficha tu primer día para ver datos
+                </div>
             </div>
             <div class="h-10"></div>
         </div>
@@ -188,12 +200,18 @@
             <div id="zen-breath" class="zen-content">
                 <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100 text-center relative overflow-hidden">
                     <h3 class="font-bold text-blue-900 mb-6">Técnica 4-4-8</h3>
-                    <div id="breath-circle" class="breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative"><span id="breath-text" class="text-slate-400 font-bold text-xl">Start</span></div>
-                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-sm font-bold btn-press shadow-lg shadow-blue-200">Iniciar Respiración</button>
+                    <div id="breath-circle" class="breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative">
+                        <span id="breath-text" class="text-slate-400 font-bold text-xl">Start</span>
+                    </div>
+                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-sm font-bold btn-press shadow-lg shadow-blue-200">
+                        Iniciar Respiración
+                    </button>
                 </div>
             </div>
             <div id="zen-bubbles" class="zen-content hidden">
-                <div class="bg-slate-200 rounded-2xl p-4 shadow-inner"><div id="bubble-grid" class="grid grid-cols-5 gap-3"></div></div>
+                <div class="bg-slate-200 rounded-2xl p-4 shadow-inner">
+                    <div id="bubble-grid" class="grid grid-cols-5 gap-3"></div>
+                </div>
                 <button onclick="resetBubbles()" class="w-full mt-4 bg-white text-slate-600 py-3 rounded-xl font-bold text-sm border border-slate-200 btn-press">🔄 Nueva lámina</button>
             </div>
             <div id="zen-body" class="zen-content hidden space-y-3">
@@ -215,8 +233,8 @@
     </nav>
 
     <script>
-        // --- LLAVE MAESTRA FIJA PARA EVITAR BORRADO ---
-        const DATA_KEY = 'thac_companion_final_db'; 
+        // --- LLAVE MAESTRA FIJA ---
+        const DATA_KEY = 'thac_app_master_db'; // Nombre definitivo
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -280,13 +298,16 @@
         function init() {
             const stored = localStorage.getItem(DATA_KEY);
             if(stored) {
-                let loaded = JSON.parse(stored);
-                // Comprobaciones de integridad
-                if(!loaded.plans) loaded.plans = [];
-                if(!loaded.cookie) loaded.cookie = { date: '', msg: '' };
-                if(!loaded.wallet || loaded.wallet.length < 8) loaded.wallet = initialRewards();
-                if(!loaded.quests) loaded.quests = { date: '', items: [] };
-                appData = loaded;
+                try {
+                    let loaded = JSON.parse(stored);
+                    if(!loaded.plans) loaded.plans = [];
+                    if(!loaded.cookie) loaded.cookie = { date: '', msg: '' };
+                    if(!loaded.wallet || loaded.wallet.length < 8) loaded.wallet = initialRewards();
+                    if(!loaded.quests) loaded.quests = { date: '', items: [] };
+                    appData = loaded;
+                } catch(e) {
+                    console.error("Error cargando datos, se usarán valores por defecto");
+                }
             }
 
             checkDailyQuests();
@@ -307,7 +328,7 @@
             renderBonsai();
         }
 
-        // --- BONSÁI GENERATIVO ---
+        // --- BONSÁI GENERATIVO (V25) ---
         function renderBonsai() {
             const c = appData.coins;
             const container = document.getElementById('bonsai-container');
@@ -332,7 +353,7 @@
                  svgContent += `<path d="M148 185 Q156 180 151 175 Q141 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
             }
 
-            if (c >= 5) { // FASE 2 MEJORADA (BONSÁI JOVEN)
+            if (c >= 5) { // FASE 2 MEJORADA
                 levelText.textContent = "Brote";
                 svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C155 180 145 160 150 145" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
@@ -466,7 +487,7 @@
         // --- BACKUP & RESTORE ---
         function exportData() {
             const dataStr = btoa(JSON.stringify(appData));
-            navigator.clipboard.writeText(dataStr).then(() => Swal.fire('¡Copiado!', 'Guarda este código en un lugar seguro.', 'success'));
+            navigator.clipboard.writeText(dataStr).then(() => Swal.fire('¡Copiado!', 'Código guardado en portapapeles.', 'success'));
         }
         
         function importData() {
