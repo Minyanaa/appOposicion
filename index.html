@@ -56,18 +56,32 @@
             transform: scale(0.95); 
         }
 
-        /* BONSÁI ANIMADO (SVG) */
-        .foliage-sway { transform-origin: center 80%; animation: swayTree 5s infinite ease-in-out alternate; }
-        .flower-bloom { transform-origin: center; animation: bloomFlower 1.5s ease-out forwards; }
+        /* BONSÁI ANIMADO (SVG) - MEJORADO */
+        .foliage-sway {
+            /* Pivota desde la base del follaje, no el centro del SVG */
+            transform-origin: center 85%; 
+            /* Se asegura que la transformación use el bounding box del grupo */
+            transform-box: fill-box; 
+            /* Animación más lenta y suave de brisa */
+            animation: gentleBreeze 4s ease-in-out infinite alternate;
+        }
+
+        .flower-bloom { 
+            transform-origin: center; 
+            transform-box: fill-box;
+            animation: bloomFlower 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; /* Efecto "pop" */
+        }
         
-        @keyframes swayTree { 
-            from { transform: rotate(-1deg); } 
-            to { transform: rotate(1deg); } 
+        @keyframes gentleBreeze {
+            0% { transform: rotate(-1.5deg) translateX(-0.5px); }
+            100% { transform: rotate(1.5deg) translateX(0.5px); }
         }
+
         @keyframes bloomFlower { 
-            0% { transform: scale(0); opacity: 0; } 
-            100% { transform: scale(1); opacity: 1; } 
+            0% { transform: scale(0) rotate(-15deg); opacity: 0; } 
+            100% { transform: scale(1) rotate(0deg); opacity: 1; } 
         }
+
         @keyframes popIn { 
             0% { transform: scale(0); } 
             100% { transform: scale(1); } 
@@ -246,7 +260,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v22_final_sakura'; 
+        const DATA_KEY = 'thac_app_v23_final_animated'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -336,7 +350,7 @@
             renderBonsai();
         }
 
-        // --- BONSÁI GENERATIVO (SAKURA SVG) ---
+        // --- BONSÁI GENERATIVO (SAKURA SVG ANIMADO) ---
         function renderBonsai() {
             const c = appData.coins;
             const container = document.getElementById('bonsai-container');
@@ -455,7 +469,7 @@
                 svgContent +=drawCloud(75, 95, 24, blossomColor, blossomCenter);
                 svgContent +=drawCloud(120, 75, 19, blossomColor, blossomCenter);
                 svgContent +=drawCloud(185, 95, 17, blossomColor, blossomCenter);
-                // Flores
+                // Flores animadas
                 svgContent +=drawSakura(140, 65, blossomColor, blossomCenter, "0.1s"); svgContent +=drawSakura(170, 80, blossomColor, blossomCenter, "0.3s");
                 svgContent +=drawSakura(200, 105, blossomColor, blossomCenter, "0.5s"); svgContent +=drawSakura(230, 125, blossomColor, blossomCenter, "0.7s");
                 svgContent +=drawSakura(60, 85, blossomColor, blossomCenter, "0.2s"); svgContent +=drawSakura(90, 105, blossomColor, blossomCenter, "0.4s");
