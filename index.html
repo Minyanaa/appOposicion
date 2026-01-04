@@ -36,8 +36,6 @@
         /* Badges */
         .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        
-        /* Checkbox */
         .quest-checkbox:checked + div { text-decoration: line-through; color: #10b981; opacity: 0.7; }
 
         /* ZONA ZEN */
@@ -48,26 +46,38 @@
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* OFICINA VIRTUAL */
-        .office-room {
-            background-color: #f1f5f9; /* Pared */
-            border-bottom: 40px solid #e2e8f0; /* Suelo */
+        /* OFICINA VIRTUAL (ARQUITECTURA) */
+        .office-scene {
             position: relative;
+            width: 100%;
+            height: 220px;
+            background-color: #f1f5f9; /* Pared */
+            border-radius: 1.5rem;
             overflow: hidden;
-            transition: all 0.5s;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            border: 1px solid #cbd5e1;
         }
-        .furniture { position: absolute; transition: all 0.5s; font-size: 2rem; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.1)); }
+        .office-floor {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #e2e8f0; /* Suelo */
+            border-top: 1px solid #cbd5e1;
+        }
+        .furniture { position: absolute; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
         
-        /* Posiciones Muebles */
-        .item-window { top: 10%; left: 10%; font-size: 3rem; }
-        .item-rug { bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 4rem; opacity: 0.8; z-index: 1; }
-        .item-desk { bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; z-index: 2; }
-        .item-plant { bottom: 20px; left: 10%; font-size: 2.5rem; z-index: 2; }
-        .item-laptop { bottom: 45px; left: 50%; transform: translateX(-50%); font-size: 1.5rem; z-index: 3; }
-        .item-cat { bottom: 15px; right: 15%; font-size: 2rem; z-index: 3; }
-        .item-lamp { bottom: 60px; right: 20%; font-size: 2.5rem; z-index: 1; }
-        .item-books { bottom: 45px; left: 40%; font-size: 1.2rem; z-index: 3; }
-        .item-coffee { bottom: 45px; left: 60%; font-size: 1rem; z-index: 3; }
+        /* Ubicaciones Fijas */
+        .pos-window { top: 20px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; opacity: 0.8; }
+        .pos-rug { bottom: 20px; left: 50%; transform: translateX(-50%) scaleX(2); font-size: 3rem; opacity: 0.9; z-index: 1; }
+        .pos-plant { bottom: 30px; left: 15px; font-size: 3rem; z-index: 2; }
+        .pos-desk { bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 4rem; z-index: 2; }
+        .pos-chair { bottom: 30px; right: 20px; font-size: 3rem; z-index: 2; transform: scaleX(-1); } /* Silla mirando a mesa */
+        .pos-laptop { bottom: 65px; left: 50%; transform: translateX(-50%); font-size: 1.8rem; z-index: 3; }
+        .pos-lamp { bottom: 65px; left: 38%; font-size: 2rem; z-index: 3; }
+        .pos-coffee { bottom: 65px; left: 62%; font-size: 1.2rem; z-index: 3; }
+        .pos-cat { bottom: 65px; left: 50%; transform: translateX(-50%) translateY(-25px); font-size: 2rem; z-index: 4; }
+        .pos-frame { top: 30px; right: 15%; font-size: 2.5rem; opacity: 0.9; }
 
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
     </style>
@@ -80,12 +90,11 @@
             <div class="mb-4 pt-2 flex justify-between items-start">
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 leading-tight">Hola, Opositora 👋</h1>
-                    
                     <div id="fortune-wrapper" class="mt-2">
                         <button id="btn-cookie" onclick="openCookie()" class="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm flex items-center gap-2 btn-press">
                             <span>🥠</span> <span>Abrir mensaje de hoy</span>
                         </button>
-                        <p id="fortune-text" class="hidden text-xs font-medium text-slate-600 italic mt-1 bg-yellow-50 p-2 rounded-lg border border-yellow-100 max-w-[280px] animate-fade-in"></p>
+                        <p id="fortune-text" class="hidden text-xs font-medium text-slate-600 italic mt-1 bg-yellow-50 p-2 rounded-lg border border-yellow-100 max-w-[280px]"></p>
                     </div>
                 </div>
                 <button onclick="openSettings()" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200 text-slate-400 btn-press">
@@ -93,26 +102,26 @@
                 </button>
             </div>
 
-            <div class="office-room h-48 w-full rounded-3xl shadow-inner mb-6 border border-slate-200" id="office-container">
-                <div class="absolute inset-0 flex items-center justify-center text-slate-300 text-sm font-bold opacity-50">Ficha para decorar</div>
+            <div class="relative bg-slate-900 rounded-3xl p-6 text-white shadow-xl shadow-slate-300 mb-6 overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 00-.566-.241l-1.427-.357a1.017 1.017 0 00-.592.056l-3.375 1.688a1 1 0 01-1.378-.492l-1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L8 4.323V3a1 1 0 011-1zm-5 8.274l-.818 2.552a1 1 0 01-.138.293 2.016 2.016 0 01-1.015.683c.516.386 1.15.598 1.812.598a2.982 2.982 0 002.322-1.122 2.983 2.983 0 00.187-.215l-2.35-4.79z" clip-rule="evenodd"></path></svg></div>
+                <div class="relative z-10">
+                    <p class="text-xs font-bold tracking-[0.2em] text-slate-400 mb-1 uppercase">Días Acumulados</p>
+                    <div class="text-6xl font-black tracking-tighter" id="coin-display">0</div>
+                    <div class="mt-2 inline-block px-3 py-1 bg-white/10 rounded-full text-xs font-bold border border-white/20" id="rank-badge">Novata</div>
+                </div>
             </div>
 
-            <div class="flex gap-4 mb-6">
-                <div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex-1 flex items-center gap-3">
-                    <div class="bg-blue-50 text-blue-600 p-2 rounded-lg">🗓️</div>
-                    <div>
-                        <div class="text-xs text-slate-400 font-bold uppercase">Total</div>
-                        <div class="text-xl font-black text-slate-800" id="coin-display">0</div>
-                    </div>
+            <div class="office-scene mb-6" id="office-container">
+                <div class="office-floor"></div>
                 </div>
-                <div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex-1 flex items-center gap-3">
-                    <div class="bg-orange-50 text-orange-500 p-2 rounded-lg">🔥</div>
-                    <div>
-                        <div class="text-xs text-slate-400 font-bold uppercase">Racha</div>
-                        <div class="text-xl font-black text-slate-800" id="streak-display">0</div>
-                    </div>
+
+            <button onclick="navTo('study')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press mb-6 group">
+                <div class="text-left">
+                    <div class="text-blue-100 text-xs font-bold uppercase mb-1">Objetivo Diario</div>
+                    <div class="text-2xl font-bold">Fichar Estudio 📝</div>
                 </div>
-            </div>
+                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
+            </button>
 
             <div class="mb-6">
                 <button onclick="toggleQuests()" class="w-full flex justify-between items-center text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70 focus:outline-none">
@@ -176,11 +185,11 @@
             <div id="countdown-container" class="space-y-4 mb-8"></div>
             
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-slate-800">Muro de los Porqués</h3>
-                <button onclick="addPlan()" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold btn-press">+ Añadir Plan</button>
+                <h3 class="font-bold text-slate-800 text-lg">🌟 Muro de los Porqués</h3>
+                <button onclick="addPlan()" class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs font-bold btn-press shadow-sm hover:bg-blue-200 transition">+ Nuevo Sueño</button>
             </div>
             
-            <div id="plans-container" class="grid grid-cols-2 gap-3">
+            <div id="plans-container" class="space-y-3">
                 </div>
             
             <div class="h-10"></div>
@@ -230,7 +239,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v15_office'; 
+        const DATA_KEY = 'thac_app_v16_architect'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -239,11 +248,11 @@
         ];
 
         const BADGES = [
-            { id: 'first_step', icon: '🐣', title: 'Primer paso', desc: 'Ficha tu primer día', condition: (d) => d.coins >= 1 },
-            { id: 'week_warrior', icon: '⚔️', title: 'Semana a tope', desc: '5 días acumulados', condition: (d) => d.coins >= 5 },
+            { id: 'first_step', icon: '🐣', title: 'Primer paso', desc: 'Ficha tu primer día de estudio', condition: (d) => d.coins >= 1 },
+            { id: 'week_warrior', icon: '⚔️', title: 'Semana a tope', desc: 'Acumula 5 días de estudio', condition: (d) => d.coins >= 5 },
             { id: 'weekend', icon: '🏖️', title: 'Finde', desc: 'Estudia un Sábado', condition: (d) => d.badges.includes('weekend') },
-            { id: 'pro', icon: '👩‍⚖️', title: 'Experta', desc: '20 días acumulados', condition: (d) => d.coins >= 20 },
-            { id: 'master', icon: '👑', title: 'Inspectora', desc: '50 días acumulados', condition: (d) => d.coins >= 50 }
+            { id: 'pro', icon: '👩‍⚖️', title: 'Experta', desc: 'Alcanza los 20 días acumulados', condition: (d) => d.coins >= 20 },
+            { id: 'master', icon: '👑', title: 'Inspectora', desc: 'Leyenda: 50 días de estudio', condition: (d) => d.coins >= 50 }
         ];
 
         const FORTUNES = [
@@ -272,7 +281,7 @@
             badges: [], 
             history: [],
             quests: { date: '', items: [] },
-            plans: [], // [{id, title, icon}]
+            plans: [], // [{id, title, icon, date}]
             cookie: { date: '', msg: '' }
         };
         let studyChartInstance = null;
@@ -297,12 +306,13 @@
                 let loaded = JSON.parse(stored);
                 if(!loaded.plans) loaded.plans = [];
                 if(!loaded.cookie) loaded.cookie = { date: '', msg: '' };
-                // Migraciones previas
+                // Migraciones
                 if(!loaded.wallet || loaded.wallet.length < 8) loaded.wallet = initialRewards();
                 if(!loaded.quests) loaded.quests = { date: '', items: [] };
                 appData = loaded;
             }
 
+            // Quote fixed fallback (cookie system used primarily)
             checkDailyQuests();
             checkDailyCookie();
             updateUI();
@@ -321,24 +331,27 @@
             renderOffice();
         }
 
-        // --- OFFICE LOGIC ---
+        // --- OFFICE LOGIC (Fixed Layout) ---
         function renderOffice() {
             const room = document.getElementById('office-container');
+            // Mantener estructura base
+            let html = '<div class="office-floor"></div>';
             const c = appData.coins;
-            let html = '';
             
-            // Progression
-            if(c >= 2) html += `<div class="furniture item-rug">🧶</div>`;
-            if(c >= 5) html += `<div class="furniture item-window">🪟</div>`;
-            if(c >= 10) html += `<div class="furniture item-plant">🌿</div>`;
-            if(c >= 15) html += `<div class="furniture item-desk">🪑</div>`;
-            if(c >= 20) html += `<div class="furniture item-lamp">🛋️</div>`;
-            if(c >= 25) html += `<div class="furniture item-cat">🐈</div>`;
-            if(c >= 30) html += `<div class="furniture item-laptop">💻</div>`;
-            if(c >= 40) html += `<div class="furniture item-books">📚</div>`;
-            if(c >= 50) html += `<div class="furniture item-coffee">☕</div>`;
+            // Objetos en posiciones CSS fijas
+            if(c >= 1) html += `<div class="furniture pos-rug">🧶</div>`;
+            if(c >= 5) html += `<div class="furniture pos-plant">🌿</div>`;
+            if(c >= 10) html += `<div class="furniture pos-desk">🪑</div>`;
+            if(c >= 15) html += `<div class="furniture pos-chair">🛋️</div>`;
+            if(c >= 20) html += `<div class="furniture pos-window">🪟</div>`;
+            if(c >= 25) html += `<div class="furniture pos-frame">🖼️</div>`;
+            if(c >= 30) html += `<div class="furniture pos-lamp">💡</div>`;
+            if(c >= 40) html += `<div class="furniture pos-laptop">💻</div>`;
+            if(c >= 50) html += `<div class="furniture pos-coffee">☕</div>`;
+            if(c >= 60) html += `<div class="furniture pos-cat">🐈</div>`;
             
-            if(html === '') html = `<div class="absolute inset-0 flex items-center justify-center text-slate-300 text-sm font-bold opacity-50">Estudia para decorar</div>`;
+            // Si está vacía
+            if(c === 0) html += `<div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm font-bold opacity-50 pointer-events-none">Estudia para decorar tu despacho</div>`;
             
             room.innerHTML = html;
         }
@@ -350,12 +363,10 @@
             const txt = document.getElementById('fortune-text');
             
             if (appData.cookie.date === today) {
-                // Ya abierta hoy
                 btn.classList.add('hidden');
                 txt.classList.remove('hidden');
                 txt.textContent = appData.cookie.msg;
             } else {
-                // Nueva disponible
                 btn.classList.remove('hidden');
                 txt.classList.add('hidden');
             }
@@ -364,28 +375,39 @@
         function openCookie() {
             const today = new Date().toISOString().split('T')[0];
             const msg = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
-            
             appData.cookie = { date: today, msg: msg };
             save();
-            
             confetti({ particleCount: 50, spread: 40, origin: { y: 0.3 }, colors: ['#fbbf24'] });
             checkDailyCookie();
         }
 
-        // --- PLANS LOGIC (WALL OF WHYS) ---
+        // --- PLANS LOGIC (MURO MEJORADO) ---
         function renderPlans() {
             const container = document.getElementById('plans-container');
             container.innerHTML = '';
             if(appData.plans.length === 0) {
-                container.innerHTML = `<div class="col-span-2 text-center text-slate-400 text-xs py-4">Añade planes para motivarte</div>`;
+                container.innerHTML = `<div class="text-center text-slate-400 text-xs py-4 border-2 border-dashed border-slate-200 rounded-xl">Añade aquí tus sueños post-plaza</div>`;
                 return;
             }
+            
+            const today = new Date();
+            
             appData.plans.forEach((p, idx) => {
+                let timeText = "Sin fecha";
+                if(p.date) {
+                    const diff = new Date(p.date) - today;
+                    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                    timeText = days > 0 ? `Faltan ${days} días` : '¡Fecha cumplida!';
+                }
+                
                 container.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center relative overflow-hidden">
-                        <div class="text-3xl mb-1">${p.icon}</div>
-                        <div class="text-xs font-bold text-slate-700 leading-tight">${p.title}</div>
-                        <button onclick="removePlan(${idx})" class="absolute top-1 right-1 text-slate-300 hover:text-red-400 text-xs">×</button>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-md flex items-center gap-4 relative overflow-hidden transform rotate-1 hover:rotate-0 transition-transform">
+                        <div class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">${p.icon}</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 leading-tight">${p.title}</div>
+                            <div class="text-xs text-slate-500 font-medium mt-1">📅 ${p.date ? p.date : 'Pendiente'} • ${timeText}</div>
+                        </div>
+                        <button onclick="removePlan(${idx})" class="text-slate-300 hover:text-red-400 text-lg px-2">×</button>
                     </div>
                 `;
             });
@@ -393,18 +415,26 @@
 
         function addPlan() {
             Swal.fire({
-                title: 'Nuevo Plan',
-                html: `<input id="swal-input1" class="swal2-input" placeholder="Título (Ej: Japón)">
-                       <input id="swal-input2" class="swal2-input" placeholder="Emoji (Ej: ⛩️)">`,
+                title: 'Nuevo Sueño',
+                html: `
+                    <div class="flex flex-col gap-3">
+                        <input id="plan-title" class="swal2-input m-0 w-full" placeholder="Título (Ej: Viaje a Japón)">
+                        <div class="flex gap-2">
+                            <input id="plan-icon" class="swal2-input m-0 w-1/4 text-center" placeholder="Emoji" value="✈️">
+                            <input id="plan-date" type="date" class="swal2-input m-0 w-3/4">
+                        </div>
+                    </div>
+                `,
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
                 confirmButtonColor: '#0f172a'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const title = document.getElementById('swal-input1').value;
-                    const icon = document.getElementById('swal-input2').value || '📍';
+                    const title = document.getElementById('plan-title').value;
+                    const icon = document.getElementById('plan-icon').value || '📍';
+                    const date = document.getElementById('plan-date').value;
                     if(title) {
-                        appData.plans.push({ title, icon });
+                        appData.plans.push({ title, icon, date });
                         save();
                         renderPlans();
                     }
@@ -420,7 +450,7 @@
             }
         }
 
-        // --- CORE LOGIC ---
+        // --- CORE FUNCTIONS ---
         function checkDailyQuests() {
             const today = new Date().toISOString().split('T')[0];
             if (appData.quests.date !== today) {
@@ -445,18 +475,19 @@
             container.innerHTML = '';
             appData.quests.items.forEach((q, index) => {
                 const checked = q.done ? 'checked' : '';
-                container.innerHTML += `
-                    <label class="flex items-center gap-3 p-2 cursor-pointer transition-all hover:bg-slate-50 rounded-lg">
-                        <input type="checkbox" class="quest-checkbox w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all" ${checked} onchange="toggleQuest(${index})">
-                        <div class="font-bold text-slate-700 text-sm select-none transition-all">${q.text}</div>
-                    </label>
-                `;
+                container.innerHTML += `<label class="flex items-center gap-3 p-2 cursor-pointer transition-all hover:bg-slate-50 rounded-lg"><input type="checkbox" class="quest-checkbox w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all" ${checked} onchange="toggleQuest(${index})"><div class="font-bold text-slate-700 text-sm select-none transition-all">${q.text}</div></label>`;
             });
         }
-
         function updateUI() {
             document.getElementById('coin-display').textContent = appData.coins;
-            document.getElementById('streak-display').textContent = appData.streak;
+            // Rango
+            let rank = "Novata";
+            if(appData.coins >= 5) rank = "Constante";
+            if(appData.coins >= 15) rank = "Experta";
+            if(appData.coins >= 30) rank = "Jefa de Unidad";
+            if(appData.coins >= 50) rank = "Inspectora";
+            document.getElementById('rank-badge').textContent = rank;
+
             const today = new Date().toISOString().split('T')[0];
             const hasStudied = appData.lastStudy === today;
             if(hasStudied) {
@@ -469,7 +500,6 @@
             renderRewards();
             renderQuests();
         }
-
         function renderRewards() {
             const rList = document.getElementById('rewards-list');
             rList.innerHTML = '';
@@ -477,51 +507,31 @@
                 const isSpent = !item.active;
                 const isLocked = appData.coins < item.cost;
                 const progress = Math.min(100, (appData.coins / item.cost) * 100);
-                
                 let html = '';
                 if(isSpent) {
-                    html = `<div class="p-5 rounded-2xl flex justify-between items-center bg-slate-50 border border-slate-200 opacity-60">
-                                <div><div class="font-bold text-slate-800 line-through">${item.title}</div><div class="text-xs font-bold text-slate-400">DISFRUTADO</div></div>
-                                <span class="text-2xl grayscale">✅</span>
-                            </div>`;
+                    html = `<div class="p-5 rounded-2xl flex justify-between items-center bg-slate-50 border border-slate-200 opacity-60"><div><div class="font-bold text-slate-800 line-through">${item.title}</div><div class="text-xs font-bold text-slate-400">DISFRUTADO</div></div><span class="text-2xl grayscale">✅</span></div>`;
                 } else if(isLocked) {
-                    html = `<div class="p-5 rounded-2xl flex justify-between items-center bg-slate-50 border border-dashed border-slate-300 relative overflow-hidden">
-                                <div class="absolute bottom-0 left-0 h-1 bg-blue-200/50" style="width:${progress}%"></div>
-                                <div><div class="font-bold text-slate-800 text-lg">${item.title}</div><div class="text-xs font-bold text-slate-400">🔒 Faltan ${item.cost - appData.coins} días</div></div>
-                                <div class="w-10 h-10 rounded-full border-2 border-slate-200 flex items-center justify-center text-xs font-bold text-slate-400 bg-white">${Math.floor(progress)}%</div>
-                            </div>`;
+                    html = `<div class="p-5 rounded-2xl flex justify-between items-center bg-slate-50 border border-dashed border-slate-300 relative overflow-hidden"><div class="absolute bottom-0 left-0 h-1 bg-blue-200/50" style="width:${progress}%"></div><div><div class="font-bold text-slate-800 text-lg">${item.title}</div><div class="text-xs font-bold text-slate-400">🔒 Faltan ${item.cost - appData.coins} días</div></div><div class="w-10 h-10 rounded-full border-2 border-slate-200 flex items-center justify-center text-xs font-bold text-slate-400 bg-white">${Math.floor(progress)}%</div></div>`;
                 } else {
-                    html = `<div class="p-5 rounded-2xl flex justify-between items-center bg-white border border-blue-100 shadow-md">
-                                <div><div class="font-bold text-slate-800 text-lg">${item.title}</div><div class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full w-fit">¡DISPONIBLE!</div></div>
-                                <button onclick="redeem(${item.id})" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold btn-press shadow-lg">Canjear</button>
-                            </div>`;
+                    html = `<div class="p-5 rounded-2xl flex justify-between items-center bg-white border border-blue-100 shadow-md"><div><div class="font-bold text-slate-800 text-lg">${item.title}</div><div class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full w-fit">¡DISPONIBLE!</div></div><button onclick="redeem(${item.id})" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold btn-press shadow-lg">Canjear</button></div>`;
                 }
                 rList.innerHTML += html;
             });
         }
-
         function confirmStudy() {
             const todayStr = new Date().toISOString().split('T')[0];
             const subject = document.getElementById('subject-select').value;
-            
-            // RACHA INVENCIBLE: Simplemente suma 1 si el día es diferente al último
-            if(appData.lastStudy !== todayStr) {
-                appData.streak++;
-            }
-            
+            if(appData.lastStudy !== todayStr) appData.streak++;
             appData.coins++;
             appData.lastStudy = todayStr;
             appData.history.push({ date: todayStr, subject: subject });
             if (new Date().getDay() === 6 && !appData.badges.includes('weekend')) appData.badges.push('weekend');
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             document.getElementById('done-msg').textContent = ["¡Enorme!", "Un día más cerca.", "Constancia pura.", "A descansar."][Math.floor(Math.random() * 4)];
-            save();
-            updateChart();
+            save(); updateChart(); renderOffice();
             const unlocked = appData.wallet.find(i => i.cost === appData.coins);
             if(unlocked) setTimeout(() => Swal.fire({ title: '¡PREMIO NUEVO!', text: unlocked.title, icon: 'success' }), 1000);
         }
-
-        // --- UTILS ---
         function renderBadges() {
             const container = document.getElementById('badges-container');
             container.innerHTML = '';
