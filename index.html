@@ -25,7 +25,6 @@
             }
         }
     </script>
-
     <style>
         :root { color-scheme: light; }
         body { -webkit-tap-highlight-color: transparent; background-color: #f8fafc; }
@@ -33,50 +32,36 @@
         .page { display: none; opacity: 0; transform: translateY(5px); transition: opacity 0.2s ease, transform 0.2s ease; }
         .page.active { display: block; opacity: 1; transform: translateY(0); }
         .btn-press:active { transform: scale(0.96); transition: transform 0.1s; }
-        
-        /* Checkbox & Badges */
         .quest-checkbox:checked + div { text-decoration: line-through; color: #10b981; opacity: 0.7; }
         .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* ZONA ZEN - Animaciones */
+        /* ZONA ZEN */
         .breath-circle { transition: transform 4s ease-in-out, background-color 0.5s, border-color 0.5s; }
         .inhale { transform: scale(1.5); border-color: #3b82f6; background-color: #eff6ff; }
         .hold { transform: scale(1.5); border-color: #eab308; background-color: #fefce8; }
         .exhale { transform: scale(1.0); border-color: #10b981; background-color: #f0fdf4; transition-duration: 8s; }
+        .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
+        .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
+
+        /* BONSÁI ANIMADO (FIX MEJORADO) */
+        /* Importante: transform-origin en coordenadas exactas de la maceta (150, 200) */
+        .tree-anim { 
+            transform-origin: 150px 200px; 
+            animation: treeSway 5s ease-in-out infinite alternate; 
+        }
         
-        .bubble { 
-            background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); 
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); 
-            transition: all 0.1s; 
-        }
-        .bubble.popped { 
-            background: #f1f5f9; 
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); 
-            transform: scale(0.95); 
-        }
-
-        /* BONSÁI ANIMADO (SVG) - MEJORADO */
-        .foliage-sway {
-            /* Pivota desde la base del follaje, no el centro del SVG */
-            transform-origin: center 85%; 
-            /* Se asegura que la transformación use el bounding box del grupo */
-            transform-box: fill-box; 
-            /* Animación más lenta y suave de brisa */
-            animation: gentleBreeze 4s ease-in-out infinite alternate;
-        }
-
         .flower-bloom { 
             transform-origin: center; 
             transform-box: fill-box;
-            animation: bloomFlower 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; /* Efecto "pop" */
+            animation: bloomFlower 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
         }
         
-        @keyframes gentleBreeze {
-            0% { transform: rotate(-1.5deg) translateX(-0.5px); }
-            100% { transform: rotate(1.5deg) translateX(0.5px); }
+        @keyframes treeSway { 
+            0% { transform: rotate(-2deg); } 
+            100% { transform: rotate(2deg); } 
         }
-
+        
         @keyframes bloomFlower { 
             0% { transform: scale(0) rotate(-15deg); opacity: 0; } 
             100% { transform: scale(1) rotate(0deg); opacity: 1; } 
@@ -96,7 +81,6 @@
             <div class="mb-4 pt-2 flex justify-between items-start">
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 leading-tight">Hola, Opositora 👋</h1>
-                    
                     <div id="fortune-wrapper" class="mt-2">
                         <button id="btn-cookie" onclick="openCookie()" class="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm flex items-center gap-2 btn-press">
                             <span>🥠</span> <span>Abrir mensaje de hoy</span>
@@ -122,7 +106,7 @@
                 <div id="bonsai-container" class="w-full h-full flex items-center justify-center">
                     </div>
                 <div class="absolute top-3 left-4 bg-green-50 text-green-800 px-3 py-1 rounded-full text-[10px] font-extrabold border border-green-100 flex items-center gap-1 shadow-sm uppercase tracking-wider">
-                    <span>🌸</span> <span id="bonsai-level-text">Semilla</span>
+                    <span>🌱</span> <span id="bonsai-level-text">Semilla</span>
                 </div>
             </div>
 
@@ -260,7 +244,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v23_final_animated'; 
+        const DATA_KEY = 'thac_app_v24_final_animated'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -364,30 +348,33 @@
             const blossomColor = "#fbcfe8";
             const blossomCenter = "#db2777";
 
+            // Sombra y Maceta Base
             let svgContent = `<ellipse cx="150" cy="235" rx="60" ry="6" fill="#000000" opacity="0.15"/>`;
             svgContent += `<path d="M100 200 L115 230 Q150 235 185 230 L200 200 Q150 195 100 200 Z" fill="${potColor}" stroke="#5b230d" stroke-width="1.5"/>`;
             svgContent += `<ellipse cx="150" cy="200" rx="50" ry="7" fill="${soilColor}"/>`;
 
-            if (c >= 1) { // FASE 1
+            // FASES
+            if (c >= 1) { // FASE 1: Semilla
                 levelText.textContent = "Semilla";
                  svgContent += `<path d="M150 200 Q150 190 148 185" stroke="#4ade80" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
                  svgContent += `<path d="M148 185 Q140 180 145 175 Q155 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
                  svgContent += `<path d="M148 185 Q156 180 151 175 Q141 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
             }
 
-            if (c >= 5) { // FASE 2
+            if (c >= 5) { // FASE 2: Brote
                 levelText.textContent = "Brote";
-                svgContent += `<g class="foliage-sway">`;
+                svgContent += `<g class="tree-anim">`; // Animación aplicada aquí
                 svgContent += `<path d="M150 200 C150 180 148 160 150 140" stroke="${trunkColor}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M150 160 Q135 150 130 140" stroke="${trunkColor}" stroke-width="2.5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M145 135 C135 125 165 125 155 135 C160 145 140 145 145 135 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="1"/>`;
-                svgContent += `<path d="M125 135 C115 125 145 125 135 135 C140 145 120 145 125 135 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="1"/>`;
+                // Hojas rediseñadas (nubes pequeñas)
+                svgContent +=drawCloud(145, 135, 12, leafColorLight, leafColorDark);
+                svgContent +=drawCloud(125, 135, 10, leafColorLight, leafColorDark);
                  svgContent += `</g>`;
             }
 
-            if (c >= 10) { // FASE 3
+            if (c >= 10) { // FASE 3: Arbolito
                 levelText.textContent = "Arbolito";
-                svgContent += `<g class="foliage-sway">`;
+                svgContent += `<g class="tree-anim">`;
                 svgContent += `<path d="M150 200 C155 170 140 150 145 120" stroke="${trunkColor}" stroke-width="7" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q170 140 175 125" stroke="${trunkColor}" stroke-width="3.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M142 130 Q120 120 115 110" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
@@ -397,9 +384,9 @@
                 svgContent += `</g>`;
             }
 
-            if (c >= 15) { // FASE 4
+            if (c >= 15) { // FASE 4: Creciendo
                 levelText.textContent = "Creciendo";
-                svgContent += `<g class="foliage-sway">`;
+                svgContent += `<g class="tree-anim">`;
                 svgContent += `<path d="M150 200 C158 170 135 140 150 100" stroke="${trunkColor}" stroke-width="9" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M148 150 Q180 140 190 120" stroke="${trunkColor}" stroke-width="4.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M140 130 Q110 120 105 100" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
@@ -409,9 +396,9 @@
                 svgContent += `</g>`;
             }
 
-             if (c >= 20) { // FASE 5
+             if (c >= 20) { // FASE 5: Formado
                 levelText.textContent = "Formado";
-                svgContent += `<g class="foliage-sway">`;
+                svgContent += `<g class="tree-anim">`;
                 svgContent += `<path d="M150 200 C165 170 125 140 155 90" stroke="${trunkColor}" stroke-width="11" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M150 160 Q195 150 205 125" stroke="${trunkColor}" stroke-width="5.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 135 Q95 125 90 105" stroke="${trunkColor}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
@@ -423,9 +410,9 @@
                 svgContent += `</g>`;
             }
 
-            if (c >= 25) { // FASE 6
+            if (c >= 25) { // FASE 6: Frondoso
                 levelText.textContent = "Frondoso";
-                svgContent += `<g class="foliage-sway">`;
+                svgContent += `<g class="tree-anim">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
@@ -438,9 +425,9 @@
                 svgContent += `</g>`;
             }
 
-             if (c >= 30) { // FASE 7
+             if (c >= 30) { // FASE 7: Capullos
                 levelText.textContent = "Capullos";
-                svgContent += `<g class="foliage-sway">`;
+                svgContent += `<g class="tree-anim">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
@@ -457,13 +444,14 @@
                 svgContent += `</g>`;
             }
 
-            if (c >= 35) { // FASE 8: LEGENDARIO
+            if (c >= 35) { // FASE 8: Legendario (Sakura)
                 levelText.textContent = "Legendario";
-                svgContent += `<g class="foliage-sway">`;
+                svgContent += `<g class="tree-anim">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M155 100 Q125 90 120 75" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
+                // Copas rosadas
                 svgContent +=drawCloud(155, 80, 33, blossomColor, blossomCenter);
                 svgContent +=drawCloud(215, 115, 27, blossomColor, blossomCenter);
                 svgContent +=drawCloud(75, 95, 24, blossomColor, blossomCenter);
@@ -506,7 +494,7 @@
             </g>`;
         }
 
-        // --- PLANS LOGIC ---
+        // --- RESTO DE FUNCIONES (Planes, Cookie, Quests, etc.) ---
         function renderPlans() {
             const container = document.getElementById('plans-container');
             container.innerHTML = '';
@@ -551,7 +539,6 @@
         }
         function removePlan(idx) { if(confirm('¿Borrar este plan?')) { appData.plans.splice(idx, 1); save(); renderPlans(); } }
 
-        // --- COOKIE LOGIC ---
         function checkDailyCookie() {
             const today = new Date().toISOString().split('T')[0];
             const btn = document.getElementById('btn-cookie');
@@ -569,7 +556,6 @@
             save(); confetti({ particleCount: 50, spread: 40, origin: { y: 0.3 }, colors: ['#fbbf24'] }); checkDailyCookie();
         }
 
-        // --- CORE FUNCTIONS ---
         function checkDailyQuests() {
             const today = new Date().toISOString().split('T')[0];
             if (appData.quests.date !== today) { appData.quests.date = today; appData.quests.items = QUESTS_LIST.map(q => ({ ...q, done: false })); save(); }
@@ -711,7 +697,7 @@
         function initBubbles() { const grid = document.getElementById('bubble-grid'); grid.innerHTML = ''; for(let i=0; i<20; i++) grid.innerHTML += `<div class="bubble w-12 h-12 rounded-full cursor-pointer" onclick="popBubble(this)"></div>`; }
         function popBubble(el) { if(!el.classList.contains('popped')) { el.classList.add('popped'); if(navigator.vibrate) navigator.vibrate(50); } }
         function resetBubbles() { initBubbles(); }
-        function openSettings() { Swal.fire({ title: 'Ajustes', html: `<div class="grid gap-3"><button onclick="simulateDays(5)" class="bg-yellow-100 text-yellow-800 p-4 rounded-xl font-bold border border-yellow-200">🧪 Avanzar 5 Días</button><button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200">⚠️ Resetear Todo</button></div>`, showConfirmButton: false, showCloseButton: true }); }
+        function openSettings() { Swal.fire({ title: 'Ajustes', html: `<div class="grid gap-3"><button onclick="simulateDays(35)" class="bg-pink-100 text-pink-800 p-4 rounded-xl font-bold border border-pink-200">🌸 Ver Sakura Full (35 días)</button><button onclick="simulateDays(5)" class="bg-yellow-100 text-yellow-800 p-4 rounded-xl font-bold border border-yellow-200">🧪 Avanzar 5 Días</button><button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200">⚠️ Resetear Todo</button></div>`, showConfirmButton: false, showCloseButton: true }); }
         function resetApp() { if(confirm("¿Seguro?")) { localStorage.removeItem(DATA_KEY); location.reload(); } }
 
         init();
