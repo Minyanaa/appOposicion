@@ -33,32 +33,43 @@
         .page.active { display: block; opacity: 1; transform: translateY(0); }
         .btn-press:active { transform: scale(0.96); transition: transform 0.1s; }
         
-        /* Animaciones Badges */
+        /* Badges */
         .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
         
-        /* Animaciones Checkbox */
+        /* Checkbox */
         .quest-checkbox:checked + div { text-decoration: line-through; color: #10b981; opacity: 0.7; }
 
-        /* ESTILOS ZONA ZEN */
-        /* Respiración */
+        /* ZONA ZEN */
         .breath-circle { transition: transform 4s ease-in-out, background-color 0.5s, border-color 0.5s; }
         .inhale { transform: scale(1.5); border-color: #3b82f6; background-color: #eff6ff; }
         .hold { transform: scale(1.5); border-color: #eab308; background-color: #fefce8; }
-        .exhale { transform: scale(1.0); border-color: #10b981; background-color: #f0fdf4; transition-duration: 8s; } /* Exhala dura 8s */
+        .exhale { transform: scale(1.0); border-color: #10b981; background-color: #f0fdf4; transition-duration: 8s; }
+        .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
+        .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* Burbujas */
-        .bubble { 
-            background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); 
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05);
-            transition: all 0.1s;
+        /* OFICINA VIRTUAL */
+        .office-room {
+            background-color: #f1f5f9; /* Pared */
+            border-bottom: 40px solid #e2e8f0; /* Suelo */
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s;
         }
-        .bubble.popped { 
-            background: #f1f5f9; 
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); 
-            transform: scale(0.95);
-        }
+        .furniture { position: absolute; transition: all 0.5s; font-size: 2rem; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.1)); }
+        
+        /* Posiciones Muebles */
+        .item-window { top: 10%; left: 10%; font-size: 3rem; }
+        .item-rug { bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 4rem; opacity: 0.8; z-index: 1; }
+        .item-desk { bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; z-index: 2; }
+        .item-plant { bottom: 20px; left: 10%; font-size: 2.5rem; z-index: 2; }
+        .item-laptop { bottom: 45px; left: 50%; transform: translateX(-50%); font-size: 1.5rem; z-index: 3; }
+        .item-cat { bottom: 15px; right: 15%; font-size: 2rem; z-index: 3; }
+        .item-lamp { bottom: 60px; right: 20%; font-size: 2.5rem; z-index: 1; }
+        .item-books { bottom: 45px; left: 40%; font-size: 1.2rem; z-index: 3; }
+        .item-coffee { bottom: 45px; left: 60%; font-size: 1rem; z-index: 3; }
+
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body class="bg-thac-bg text-slate-800 h-[100dvh] flex flex-col overflow-hidden selection:bg-blue-200">
@@ -66,35 +77,39 @@
     <main id="app-content" class="flex-1 overflow-y-auto no-scrollbar p-6 pb-40">
         
         <div id="page-home" class="page active">
-            <div class="mb-6 pt-2">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h1 class="text-2xl font-extrabold text-slate-900 leading-tight">Hola, Opositora 👋</h1>
-                        <p id="daily-quote" class="text-slate-500 text-xs font-medium mt-1 italic max-w-[250px]">"La disciplina es el puente entre metas y logros."</p>
+            <div class="mb-4 pt-2 flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900 leading-tight">Hola, Opositora 👋</h1>
+                    
+                    <div id="fortune-wrapper" class="mt-2">
+                        <button id="btn-cookie" onclick="openCookie()" class="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm flex items-center gap-2 btn-press">
+                            <span>🥠</span> <span>Abrir mensaje de hoy</span>
+                        </button>
+                        <p id="fortune-text" class="hidden text-xs font-medium text-slate-600 italic mt-1 bg-yellow-50 p-2 rounded-lg border border-yellow-100 max-w-[280px] animate-fade-in"></p>
                     </div>
-                    <button onclick="openSettings()" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200 text-slate-400 btn-press">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </button>
                 </div>
+                <button onclick="openSettings()" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200 text-slate-400 btn-press">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </button>
             </div>
 
-            <div class="relative bg-slate-900 rounded-3xl p-6 text-white shadow-xl shadow-slate-200 mb-6 overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 00-.566-.241l-1.427-.357a1.017 1.017 0 00-.592.056l-3.375 1.688a1 1 0 01-1.378-.492l-1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L8 4.323V3a1 1 0 011-1zm-5 8.274l-.818 2.552a1 1 0 01-.138.293 2.016 2.016 0 01-1.015.683c.516.386 1.15.598 1.812.598a2.982 2.982 0 002.322-1.122 2.983 2.983 0 00.187-.215l-2.35-4.79z" clip-rule="evenodd"></path></svg></div>
-                
-                <div class="flex justify-between items-end">
+            <div class="office-room h-48 w-full rounded-3xl shadow-inner mb-6 border border-slate-200" id="office-container">
+                <div class="absolute inset-0 flex items-center justify-center text-slate-300 text-sm font-bold opacity-50">Ficha para decorar</div>
+            </div>
+
+            <div class="flex gap-4 mb-6">
+                <div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex-1 flex items-center gap-3">
+                    <div class="bg-blue-50 text-blue-600 p-2 rounded-lg">🗓️</div>
                     <div>
-                        <p class="text-xs font-bold tracking-[0.2em] text-slate-400 mb-2 uppercase">Total Acumulado</p>
-                        <div class="flex items-baseline gap-2">
-                            <span id="coin-display" class="text-5xl font-black tracking-tighter">0</span>
-                            <span class="text-lg font-medium text-slate-400">Días</span>
-                        </div>
+                        <div class="text-xs text-slate-400 font-bold uppercase">Total</div>
+                        <div class="text-xl font-black text-slate-800" id="coin-display">0</div>
                     </div>
-                    <div class="text-right">
-                        <div class="flex items-center gap-1 justify-end text-orange-400">
-                            <span id="streak-icon" class="text-2xl">🔥</span>
-                            <span id="streak-display" class="text-2xl font-bold">0</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Racha Actual</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex-1 flex items-center gap-3">
+                    <div class="bg-orange-50 text-orange-500 p-2 rounded-lg">🔥</div>
+                    <div>
+                        <div class="text-xs text-slate-400 font-bold uppercase">Racha</div>
+                        <div class="text-xl font-black text-slate-800" id="streak-display">0</div>
                     </div>
                 </div>
             </div>
@@ -104,34 +119,14 @@
                     <span>Misiones de Bienestar</span>
                     <span id="quests-arrow" class="transition-transform duration-200">▼</span>
                 </button>
-                <div id="quests-container" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3 transition-all">
-                    </div>
+                <div id="quests-container" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3 transition-all"></div>
             </div>
 
             <div class="mb-6">
-                <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Logros (Toca para ver)</h2>
+                <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Logros</h2>
                 <div id="badges-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
             </div>
-
-            <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Acciones</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="navTo('study')" class="col-span-2 bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press">
-                    <div class="text-left">
-                        <div class="text-blue-200 text-xs font-bold uppercase mb-1">Tu objetivo hoy</div>
-                        <div class="text-xl font-bold">Fichar Estudio 📝</div>
-                    </div>
-                    <div class="bg-white/20 p-2 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
-                </button>
-                
-                <button onclick="navTo('rewards')" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center gap-1 btn-press h-28">
-                    <span class="text-2xl">🏆</span>
-                    <span class="font-bold text-slate-700 text-xs">Premios</span>
-                </button>
-                <button onclick="navTo('dates')" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center gap-1 btn-press h-28">
-                    <span class="text-2xl">📅</span>
-                    <span class="font-bold text-slate-700 text-xs">Fechas</span>
-                </button>
-            </div>
+            
             <div class="h-10"></div>
         </div>
 
@@ -152,12 +147,8 @@
                         </select>
                         <div class="absolute right-4 top-4 pointer-events-none text-slate-400">▼</div>
                     </div>
-
-                    <button onclick="confirmStudy()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-300 btn-press">
-                        CONFIRMAR SESIÓN
-                    </button>
+                    <button onclick="confirmStudy()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-300 btn-press">CONFIRMAR SESIÓN</button>
                 </div>
-
                 <div id="study-done" class="hidden text-center py-4">
                     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl animate-bounce">🛡️</div>
                     <h3 class="font-bold text-lg text-green-800">¡Registrado!</h3>
@@ -168,9 +159,7 @@
             <h3 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Distribución</h3>
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative">
                 <canvas id="studyChart"></canvas>
-                <div id="no-data-msg" class="absolute inset-0 flex items-center justify-center bg-white/80 text-sm text-slate-400">
-                    Ficha tu primer día para ver datos
-                </div>
+                <div id="no-data-msg" class="absolute inset-0 flex items-center justify-center bg-white/80 text-sm text-slate-400">Ficha tu primer día para ver datos</div>
             </div>
             <div class="h-10"></div>
         </div>
@@ -182,14 +171,23 @@
         </div>
 
         <div id="page-dates" class="page">
-            <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Calendario</h2>
-            <div id="countdown-container" class="space-y-4"></div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Futuro</h2>
+            
+            <div id="countdown-container" class="space-y-4 mb-8"></div>
+            
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-800">Muro de los Porqués</h3>
+                <button onclick="addPlan()" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold btn-press">+ Añadir Plan</button>
+            </div>
+            
+            <div id="plans-container" class="grid grid-cols-2 gap-3">
+                </div>
+            
             <div class="h-10"></div>
         </div>
 
         <div id="page-relax" class="page">
             <h2 class="text-2xl font-bold text-slate-900 mb-6 mt-2">Botiquín Zen</h2>
-            
             <div class="flex p-1 bg-slate-100 rounded-xl mb-6">
                 <button onclick="switchZen('breath')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-slate-800 shadow-sm" data-tab="breath">Respirar</button>
                 <button onclick="switchZen('bubbles')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-500" data-tab="bubbles">Burbujas</button>
@@ -199,89 +197,40 @@
             <div id="zen-breath" class="zen-content">
                 <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100 text-center relative overflow-hidden">
                     <h3 class="font-bold text-blue-900 mb-6">Técnica 4-4-8</h3>
-                    
                     <div id="breath-circle" class="breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative">
                         <span id="breath-text" class="text-slate-400 font-bold text-xl">Start</span>
                     </div>
-
-                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-sm font-bold btn-press shadow-lg shadow-blue-200">
-                        Iniciar Respiración
-                    </button>
-                    <p class="text-slate-400 text-xs mt-4">Ayuda a reducir el cortisol en 2 min.</p>
+                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-sm font-bold btn-press shadow-lg shadow-blue-200">Iniciar Respiración</button>
                 </div>
             </div>
 
             <div id="zen-bubbles" class="zen-content hidden">
                 <div class="bg-slate-200 rounded-2xl p-4 shadow-inner">
-                    <div id="bubble-grid" class="grid grid-cols-5 gap-3">
-                        </div>
+                    <div id="bubble-grid" class="grid grid-cols-5 gap-3"></div>
                 </div>
-                <button onclick="resetBubbles()" class="w-full mt-4 bg-white text-slate-600 py-3 rounded-xl font-bold text-sm border border-slate-200 btn-press">
-                    🔄 Nueva lámina
-                </button>
+                <button onclick="resetBubbles()" class="w-full mt-4 bg-white text-slate-600 py-3 rounded-xl font-bold text-sm border border-slate-200 btn-press">🔄 Nueva lámina</button>
             </div>
 
             <div id="zen-body" class="zen-content hidden space-y-3">
-                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                    <div class="text-3xl">🦒</div>
-                    <div>
-                        <div class="font-bold text-slate-800">Cuello</div>
-                        <div class="text-xs text-slate-500">Gira suavemente a los lados (10s)</div>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                    <div class="text-3xl">🤷‍♀️</div>
-                    <div>
-                        <div class="font-bold text-slate-800">Hombros</div>
-                        <div class="text-xs text-slate-500">Rotaciones hacia atrás (10 reps)</div>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                    <div class="text-3xl">🤲</div>
-                    <div>
-                        <div class="font-bold text-slate-800">Muñecas</div>
-                        <div class="text-xs text-slate-500">Estira los flexores con el brazo recto</div>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm">
-                    <div class="text-3xl">🐈</div>
-                    <div>
-                        <div class="font-bold text-slate-800">Gato Sentado</div>
-                        <div class="text-xs text-slate-500">Arquea la espalda hacia delante y atrás</div>
-                    </div>
-                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🦒</div><div><div class="font-bold text-slate-800">Cuello</div><div class="text-xs text-slate-500">Gira suavemente a los lados (10s)</div></div></div>
+                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🤷‍♀️</div><div><div class="font-bold text-slate-800">Hombros</div><div class="text-xs text-slate-500">Rotaciones hacia atrás (10 reps)</div></div></div>
+                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🤲</div><div><div class="font-bold text-slate-800">Muñecas</div><div class="text-xs text-slate-500">Estira los flexores brazo recto</div></div></div>
+                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🐈</div><div><div class="font-bold text-slate-800">Gato Sentado</div><div class="text-xs text-slate-500">Arquea espalda delante/atrás</div></div></div>
             </div>
-
             <div class="h-10"></div>
         </div>
-
     </main>
 
     <nav class="fixed bottom-0 w-full bg-white border-t border-slate-200 pb-safe px-4 flex justify-between items-center z-50 h-[80px] shadow-[0_-5px_15px_rgba(0,0,0,0.02)]">
-        <button onclick="navTo('home')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-blue-600 h-full" data-target="home">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="text-[10px] font-bold">Inicio</span>
-        </button>
-        <button onclick="navTo('study')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="study">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-            <span class="text-[10px] font-bold">Fichar</span>
-        </button>
-        <button onclick="navTo('rewards')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="rewards">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
-            <span class="text-[10px] font-bold">Premios</span>
-        </button>
-        <button onclick="navTo('dates')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="dates">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            <span class="text-[10px] font-bold">Fechas</span>
-        </button>
-        <button onclick="navTo('relax')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="relax">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span class="text-[10px] font-bold">Zen</span>
-        </button>
+        <button onclick="navTo('home')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-blue-600 h-full" data-target="home"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg><span class="text-[10px] font-bold">Inicio</span></button>
+        <button onclick="navTo('dates')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="dates"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg><span class="text-[10px] font-bold">Futuro</span></button>
+        <button onclick="navTo('study')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="study"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg><span class="text-[10px] font-bold">Fichar</span></button>
+        <button onclick="navTo('rewards')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="rewards"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg><span class="text-[10px] font-bold">Premios</span></button>
+        <button onclick="navTo('relax')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="relax"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-[10px] font-bold">Zen</span></button>
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v14_zen_tools'; 
+        const DATA_KEY = 'thac_app_v15_office'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -290,11 +239,20 @@
         ];
 
         const BADGES = [
-            { id: 'first_step', icon: '🐣', title: 'Primer paso', desc: 'Ficha tu primer día de estudio', condition: (d) => d.coins >= 1 },
-            { id: 'week_warrior', icon: '⚔️', title: 'Semana a tope', desc: 'Acumula 5 días de estudio', condition: (d) => d.coins >= 5 },
+            { id: 'first_step', icon: '🐣', title: 'Primer paso', desc: 'Ficha tu primer día', condition: (d) => d.coins >= 1 },
+            { id: 'week_warrior', icon: '⚔️', title: 'Semana a tope', desc: '5 días acumulados', condition: (d) => d.coins >= 5 },
             { id: 'weekend', icon: '🏖️', title: 'Finde', desc: 'Estudia un Sábado', condition: (d) => d.badges.includes('weekend') },
-            { id: 'pro', icon: '👩‍⚖️', title: 'Experta', desc: 'Alcanza los 20 días acumulados', condition: (d) => d.coins >= 20 },
-            { id: 'master', icon: '👑', title: 'Inspectora', desc: 'Leyenda: 50 días de estudio', condition: (d) => d.coins >= 50 }
+            { id: 'pro', icon: '👩‍⚖️', title: 'Experta', desc: '20 días acumulados', condition: (d) => d.coins >= 20 },
+            { id: 'master', icon: '👑', title: 'Inspectora', desc: '50 días acumulados', condition: (d) => d.coins >= 50 }
+        ];
+
+        const FORTUNES = [
+            "El éxito es la suma de pequeños esfuerzos repetidos.", "Hoy es un buen día para estar orgullosa de ti.", "Confía en tu yo del futuro, te lo agradecerá.",
+            "No te pares hasta que te sientas orgullosa.", "Eres más fuerte que tus excusas.", "La constancia siempre gana al talento.",
+            "Un día más es un día menos.", "Estás construyendo tu libertad.", "Respira. Lo estás haciendo bien.", "Tu esfuerzo tiene recompensa, prometido.",
+            "Visualiza la plaza. Es tuya.", "La disciplina es amor propio.", "Hoy sumas. Mañana recoges.", "Cada tema estudiado es un ladrillo de tu castillo.",
+            "No necesitas suerte, necesitas constancia.", "Eres capaz de todo lo que te propongas.", "Descansar también es parte del trabajo.",
+            "Si te cansas, aprende a descansar, no a renunciar.", "Tu yo de 2026 te está aplaudiendo.", "Hacienda somos todos, pero tú serás la jefa."
         ];
 
         const QUESTS_LIST = [
@@ -306,15 +264,6 @@
             { id: 'photo', text: '📸 Selfie a Javi' }
         ];
 
-        const QUOTES = [
-            "La disciplina es hacer lo que tienes que hacer, incluso si no quieres.",
-            "Un día más es un día menos para el objetivo.",
-            "Confía en el proceso. Los resultados llegan.",
-            "El éxito es la suma de pequeños esfuerzos repetidos.",
-            "No te pares hasta que te sientas orgullosa.",
-            "Hoy sumas. Mañana recoges."
-        ];
-
         let appData = { 
             coins: 0, 
             lastStudy: '', 
@@ -322,10 +271,12 @@
             wallet: initialRewards(), 
             badges: [], 
             history: [],
-            quests: { date: '', items: [] } 
+            quests: { date: '', items: [] },
+            plans: [], // [{id, title, icon}]
+            cookie: { date: '', msg: '' }
         };
         let studyChartInstance = null;
-        let breathInterval = null; // Controla el ciclo de respiración
+        let breathInterval = null;
 
         function initialRewards() {
             return [
@@ -344,117 +295,132 @@
             const stored = localStorage.getItem(DATA_KEY);
             if(stored) {
                 let loaded = JSON.parse(stored);
+                if(!loaded.plans) loaded.plans = [];
+                if(!loaded.cookie) loaded.cookie = { date: '', msg: '' };
+                // Migraciones previas
                 if(!loaded.wallet || loaded.wallet.length < 8) loaded.wallet = initialRewards();
-                if(!loaded.history) loaded.history = [];
-                if(!loaded.badges) loaded.badges = [];
                 if(!loaded.quests) loaded.quests = { date: '', items: [] };
-                if(typeof loaded.streak === 'undefined') loaded.streak = 0;
                 appData = loaded;
             }
 
-            document.getElementById('daily-quote').textContent = `"${QUOTES[Math.floor(Math.random() * QUOTES.length)]}"`;
             checkDailyQuests();
+            checkDailyCookie();
             updateUI();
             renderCountdowns();
             renderBadges();
+            renderPlans();
+            renderOffice();
             updateChart();
-            initBubbles(); // Generar burbujas al inicio
+            initBubbles();
         }
 
         function save() {
             localStorage.setItem(DATA_KEY, JSON.stringify(appData));
             updateUI();
             renderBadges();
+            renderOffice();
         }
 
-        // --- ZONA ZEN LOGIC ---
-        function switchZen(tab) {
-            document.querySelectorAll('.zen-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('zen-'+tab).classList.remove('hidden');
+        // --- OFFICE LOGIC ---
+        function renderOffice() {
+            const room = document.getElementById('office-container');
+            const c = appData.coins;
+            let html = '';
             
-            document.querySelectorAll('.zen-tab').forEach(el => {
-                el.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
-                el.classList.add('text-slate-500');
-            });
-            document.querySelector(`.zen-tab[data-tab="${tab}"]`).classList.add('bg-white', 'text-slate-800', 'shadow-sm');
-            document.querySelector(`.zen-tab[data-tab="${tab}"]`).classList.remove('text-slate-500');
+            // Progression
+            if(c >= 2) html += `<div class="furniture item-rug">🧶</div>`;
+            if(c >= 5) html += `<div class="furniture item-window">🪟</div>`;
+            if(c >= 10) html += `<div class="furniture item-plant">🌿</div>`;
+            if(c >= 15) html += `<div class="furniture item-desk">🪑</div>`;
+            if(c >= 20) html += `<div class="furniture item-lamp">🛋️</div>`;
+            if(c >= 25) html += `<div class="furniture item-cat">🐈</div>`;
+            if(c >= 30) html += `<div class="furniture item-laptop">💻</div>`;
+            if(c >= 40) html += `<div class="furniture item-books">📚</div>`;
+            if(c >= 50) html += `<div class="furniture item-coffee">☕</div>`;
             
-            // Si salimos de respiración, parar
-            if(tab !== 'breath') stopBreathing();
+            if(html === '') html = `<div class="absolute inset-0 flex items-center justify-center text-slate-300 text-sm font-bold opacity-50">Estudia para decorar</div>`;
+            
+            room.innerHTML = html;
         }
 
-        // RESPIRACIÓN
-        function toggleBreathing() {
-            if(breathInterval) {
-                stopBreathing();
+        // --- COOKIE LOGIC ---
+        function checkDailyCookie() {
+            const today = new Date().toISOString().split('T')[0];
+            const btn = document.getElementById('btn-cookie');
+            const txt = document.getElementById('fortune-text');
+            
+            if (appData.cookie.date === today) {
+                // Ya abierta hoy
+                btn.classList.add('hidden');
+                txt.classList.remove('hidden');
+                txt.textContent = appData.cookie.msg;
             } else {
-                startBreathingCycle();
+                // Nueva disponible
+                btn.classList.remove('hidden');
+                txt.classList.add('hidden');
             }
         }
 
-        function startBreathingCycle() {
-            const btn = document.getElementById('btn-breath-toggle');
-            btn.textContent = "Detener";
-            btn.classList.replace('bg-blue-600', 'bg-slate-800');
+        function openCookie() {
+            const today = new Date().toISOString().split('T')[0];
+            const msg = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
             
-            runPhase(); // Primer ciclo inmediato
-            breathInterval = setInterval(runPhase, 16000); // 4+4+8 = 16s
+            appData.cookie = { date: today, msg: msg };
+            save();
+            
+            confetti({ particleCount: 50, spread: 40, origin: { y: 0.3 }, colors: ['#fbbf24'] });
+            checkDailyCookie();
         }
 
-        function runPhase() {
-            const circle = document.getElementById('breath-circle');
-            const text = document.getElementById('breath-text');
-            
-            // INHALA (4s)
-            text.textContent = "Inhala";
-            circle.className = "breath-circle inhale w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative";
-            
-            setTimeout(() => {
-                // MANTEN (4s)
-                text.textContent = "Mantén";
-                circle.className = "breath-circle hold w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative";
-                
-                setTimeout(() => {
-                    // EXHALA (8s)
-                    text.textContent = "Exhala";
-                    circle.className = "breath-circle exhale w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative";
-                }, 4000);
-            }, 4000);
+        // --- PLANS LOGIC (WALL OF WHYS) ---
+        function renderPlans() {
+            const container = document.getElementById('plans-container');
+            container.innerHTML = '';
+            if(appData.plans.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center text-slate-400 text-xs py-4">Añade planes para motivarte</div>`;
+                return;
+            }
+            appData.plans.forEach((p, idx) => {
+                container.innerHTML += `
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center relative overflow-hidden">
+                        <div class="text-3xl mb-1">${p.icon}</div>
+                        <div class="text-xs font-bold text-slate-700 leading-tight">${p.title}</div>
+                        <button onclick="removePlan(${idx})" class="absolute top-1 right-1 text-slate-300 hover:text-red-400 text-xs">×</button>
+                    </div>
+                `;
+            });
         }
 
-        function stopBreathing() {
-            clearInterval(breathInterval);
-            breathInterval = null;
-            const circle = document.getElementById('breath-circle');
-            const text = document.getElementById('breath-text');
-            const btn = document.getElementById('btn-breath-toggle');
-            
-            // Reset visuales
-            circle.className = "breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative";
-            text.textContent = "Start";
-            btn.textContent = "Iniciar Respiración";
-            btn.classList.replace('bg-slate-800', 'bg-blue-600');
+        function addPlan() {
+            Swal.fire({
+                title: 'Nuevo Plan',
+                html: `<input id="swal-input1" class="swal2-input" placeholder="Título (Ej: Japón)">
+                       <input id="swal-input2" class="swal2-input" placeholder="Emoji (Ej: ⛩️)">`,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                confirmButtonColor: '#0f172a'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const title = document.getElementById('swal-input1').value;
+                    const icon = document.getElementById('swal-input2').value || '📍';
+                    if(title) {
+                        appData.plans.push({ title, icon });
+                        save();
+                        renderPlans();
+                    }
+                }
+            });
         }
 
-        // BURBUJAS
-        function initBubbles() {
-            const grid = document.getElementById('bubble-grid');
-            grid.innerHTML = '';
-            for(let i=0; i<20; i++) {
-                grid.innerHTML += `<div class="bubble w-12 h-12 rounded-full cursor-pointer" onclick="popBubble(this)"></div>`;
+        function removePlan(idx) {
+            if(confirm('¿Borrar este plan?')) {
+                appData.plans.splice(idx, 1);
+                save();
+                renderPlans();
             }
         }
-        function popBubble(el) {
-            if(!el.classList.contains('popped')) {
-                el.classList.add('popped');
-                if(navigator.vibrate) navigator.vibrate(50); // Vibración
-            }
-        }
-        function resetBubbles() {
-            initBubbles();
-        }
 
-        // --- RESTO DE LÓGICA (QUESTS, STREAK, ETC) ---
+        // --- CORE LOGIC ---
         function checkDailyQuests() {
             const today = new Date().toISOString().split('T')[0];
             if (appData.quests.date !== today) {
@@ -463,26 +429,17 @@
                 save();
             }
         }
-        
         function toggleQuests() {
             const container = document.getElementById('quests-container');
             const arrow = document.getElementById('quests-arrow');
             container.classList.toggle('hidden');
-            if(container.classList.contains('hidden')) {
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                arrow.style.transform = 'rotate(180deg)';
-            }
+            arrow.style.transform = container.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
-
         function toggleQuest(index) {
             appData.quests.items[index].done = !appData.quests.items[index].done;
             save();
-            if(appData.quests.items[index].done) {
-                confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 }, colors: ['#10b981'] });
-            }
+            if(appData.quests.items[index].done) confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 }, colors: ['#10b981'] });
         }
-
         function renderQuests() {
             const container = document.getElementById('quests-container');
             container.innerHTML = '';
@@ -495,16 +452,6 @@
                     </label>
                 `;
             });
-        }
-
-        function checkStreak(todayStr) {
-            if (!appData.lastStudy) return 1;
-            const last = new Date(appData.lastStudy);
-            const today = new Date(todayStr);
-            const diffDays = Math.ceil(Math.abs(today - last) / (1000 * 60 * 60 * 24)); 
-            if (diffDays === 0) return appData.streak; 
-            if (diffDays <= 3) return appData.streak + 1; 
-            return 1; 
         }
 
         function updateUI() {
@@ -556,7 +503,12 @@
         function confirmStudy() {
             const todayStr = new Date().toISOString().split('T')[0];
             const subject = document.getElementById('subject-select').value;
-            appData.streak = checkStreak(todayStr);
+            
+            // RACHA INVENCIBLE: Simplemente suma 1 si el día es diferente al último
+            if(appData.lastStudy !== todayStr) {
+                appData.streak++;
+            }
+            
             appData.coins++;
             appData.lastStudy = todayStr;
             appData.history.push({ date: todayStr, subject: subject });
@@ -569,33 +521,21 @@
             if(unlocked) setTimeout(() => Swal.fire({ title: '¡PREMIO NUEVO!', text: unlocked.title, icon: 'success' }), 1000);
         }
 
+        // --- UTILS ---
         function renderBadges() {
             const container = document.getElementById('badges-container');
             container.innerHTML = '';
             BADGES.forEach(b => {
                 const isUnlocked = b.condition(appData) || appData.badges.includes(b.id);
                 const styleClass = isUnlocked ? 'badge-unlocked bg-white border-blue-100 shadow-sm' : 'badge-locked bg-slate-50 border-slate-100';
-                
-                container.innerHTML += `
-                    <div onclick="showBadgeInfo('${b.id}')" class="flex-shrink-0 w-20 p-2 rounded-xl border flex flex-col items-center text-center ${styleClass} cursor-pointer btn-press">
-                        <div class="text-2xl mb-1">${b.icon}</div>
-                        <div class="text-[10px] font-bold text-slate-700 leading-tight">${b.title}</div>
-                    </div>`;
+                container.innerHTML += `<div onclick="showBadgeInfo('${b.id}')" class="flex-shrink-0 w-20 p-2 rounded-xl border flex flex-col items-center text-center ${styleClass} cursor-pointer btn-press"><div class="text-2xl mb-1">${b.icon}</div><div class="text-[10px] font-bold text-slate-700 leading-tight">${b.title}</div></div>`;
             });
         }
-
         function showBadgeInfo(id) {
             const b = BADGES.find(x => x.id === id);
             const isUnlocked = b.condition(appData) || appData.badges.includes(id);
-            Swal.fire({
-                icon: isUnlocked ? 'success' : 'info',
-                title: b.title,
-                text: b.desc,
-                footer: isUnlocked ? '✅ ¡Conseguido!' : '🔒 Sigue esforzándote',
-                confirmButtonColor: '#0f172a'
-            });
+            Swal.fire({ icon: isUnlocked ? 'success' : 'info', title: b.title, text: b.desc, footer: isUnlocked ? '✅ ¡Conseguido!' : '🔒 Sigue esforzándote', confirmButtonColor: '#0f172a' });
         }
-
         function updateChart() {
             const ctx = document.getElementById('studyChart');
             if(appData.history.length === 0) { document.getElementById('no-data-msg').style.display = 'flex'; return; }
@@ -606,7 +546,6 @@
             if(studyChartInstance) { studyChartInstance.data = data; studyChartInstance.update(); } 
             else { studyChartInstance = new Chart(ctx, { type: 'doughnut', data: data, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: {family: "'Plus Jakarta Sans'"} } } }, cutout: '70%' } }); }
         }
-
         function renderCountdowns() {
             const container = document.getElementById('countdown-container');
             container.innerHTML = '';
@@ -614,39 +553,21 @@
             EXAMS.forEach(exam => {
                 const examDate = new Date(exam.date);
                 const daysLeft = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
-                container.innerHTML += `
-                    <div class="p-5 rounded-2xl border bg-white border-slate-200 shadow-sm flex justify-between items-center">
-                        <div><div class="text-xs font-bold uppercase opacity-50 mb-1 text-slate-500">${exam.date}</div><div class="font-extrabold text-lg text-slate-800">${exam.name}</div></div>
-                        <div class="text-center"><span class="block text-3xl font-black tracking-tight text-blue-600">${daysLeft}</span><span class="text-[10px] font-bold uppercase text-slate-400">Días</span></div>
-                    </div>`;
+                container.innerHTML += `<div class="p-5 rounded-2xl border bg-white border-slate-200 shadow-sm flex justify-between items-center"><div><div class="text-xs font-bold uppercase opacity-50 mb-1 text-slate-500">${exam.date}</div><div class="font-extrabold text-lg text-slate-800">${exam.name}</div></div><div class="text-center"><span class="block text-3xl font-black tracking-tight text-blue-600">${daysLeft}</span><span class="text-[10px] font-bold uppercase text-slate-400">Días</span></div></div>`;
             });
         }
-
         function simulateDays(days) {
             appData.coins += days;
             appData.streak += days; 
             for(let i=0; i<days; i++) appData.history.push({date: 'simulated', subject: 'Simulacro'});
-            save(); Swal.close(); updateChart();
+            save(); Swal.close(); updateChart(); renderOffice();
             Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 2000}).fire({icon: 'success', title: `+${days} Días simulados`});
         }
-
         function redeem(id) {
-            Swal.fire({
-                title: '¿Canjear?',
-                text: "Avisa a Javi de que has canjeado un premio.", 
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Canjear', 
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#0f172a'
-            }).then((r) => {
-                if (r.isConfirmed) {
-                    const item = appData.wallet.find(i => i.id === id);
-                    if(item) { item.active = false; save(); Swal.fire({title: '¡Disfrutado!', icon: 'success', confirmButtonColor: '#0f172a'}); }
-                }
+            Swal.fire({ title: '¿Canjear?', text: "Avisa a Javi de que has canjeado un premio.", icon: 'question', showCancelButton: true, confirmButtonText: 'Canjear', cancelButtonText: 'Cancelar', confirmButtonColor: '#0f172a' }).then((r) => {
+                if (r.isConfirmed) { const item = appData.wallet.find(i => i.id === id); if(item) { item.active = false; save(); Swal.fire({title: '¡Disfrutado!', icon: 'success', confirmButtonColor: '#0f172a'}); } }
             });
         }
-
         function navTo(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-'+page).classList.add('active');
@@ -654,15 +575,22 @@
             const btn = document.querySelector(`.nav-btn[data-target="${page}"]`);
             if(btn) { btn.classList.remove('text-slate-400'); btn.classList.add('text-blue-600'); }
         }
-
-        function openSettings() {
-            Swal.fire({
-                title: 'Ajustes',
-                html: `<div class="grid gap-3"><button onclick="simulateDays(5)" class="bg-yellow-100 text-yellow-800 p-4 rounded-xl font-bold border border-yellow-200">🧪 Avanzar 5 Días</button><button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200">⚠️ Resetear Todo</button></div>`,
-                showConfirmButton: false, showCloseButton: true
-            });
+        function switchZen(tab) {
+            document.querySelectorAll('.zen-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('zen-'+tab).classList.remove('hidden');
+            document.querySelectorAll('.zen-tab').forEach(el => { el.classList.remove('bg-white', 'text-slate-800', 'shadow-sm'); el.classList.add('text-slate-500'); });
+            document.querySelector(`.zen-tab[data-tab="${tab}"]`).classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+            document.querySelector(`.zen-tab[data-tab="${tab}"]`).classList.remove('text-slate-500');
+            if(tab !== 'breath') stopBreathing();
         }
-
+        function toggleBreathing() { if(breathInterval) stopBreathing(); else startBreathingCycle(); }
+        function startBreathingCycle() { const btn = document.getElementById('btn-breath-toggle'); btn.textContent = "Detener"; btn.classList.replace('bg-blue-600', 'bg-slate-800'); runPhase(); breathInterval = setInterval(runPhase, 16000); }
+        function runPhase() { const circle = document.getElementById('breath-circle'); const text = document.getElementById('breath-text'); text.textContent = "Inhala"; circle.className = "breath-circle inhale w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative"; setTimeout(() => { text.textContent = "Mantén"; circle.className = "breath-circle hold w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative"; setTimeout(() => { text.textContent = "Exhala"; circle.className = "breath-circle exhale w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative"; }, 4000); }, 4000); }
+        function stopBreathing() { clearInterval(breathInterval); breathInterval = null; const circle = document.getElementById('breath-circle'); const text = document.getElementById('breath-text'); const btn = document.getElementById('btn-breath-toggle'); circle.className = "breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative"; text.textContent = "Start"; btn.textContent = "Iniciar Respiración"; btn.classList.replace('bg-slate-800', 'bg-blue-600'); }
+        function initBubbles() { const grid = document.getElementById('bubble-grid'); grid.innerHTML = ''; for(let i=0; i<20; i++) grid.innerHTML += `<div class="bubble w-12 h-12 rounded-full cursor-pointer" onclick="popBubble(this)"></div>`; }
+        function popBubble(el) { if(!el.classList.contains('popped')) { el.classList.add('popped'); if(navigator.vibrate) navigator.vibrate(50); } }
+        function resetBubbles() { initBubbles(); }
+        function openSettings() { Swal.fire({ title: 'Ajustes', html: `<div class="grid gap-3"><button onclick="simulateDays(5)" class="bg-yellow-100 text-yellow-800 p-4 rounded-xl font-bold border border-yellow-200">🧪 Avanzar 5 Días</button><button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200">⚠️ Resetear Todo</button></div>`, showConfirmButton: false, showCloseButton: true }); }
         function resetApp() { if(confirm("¿Seguro?")) { localStorage.removeItem(DATA_KEY); location.reload(); } }
 
         init();
