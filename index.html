@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="color-scheme" content="light only">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>THAC Companion</title>
     
     <link rel="manifest" href="manifest.json">
@@ -48,31 +51,22 @@
         .foliage-sway {
             transform-origin: center 85%; 
             transform-box: fill-box; 
-            /* Animación más rápida (3s) y con nombre nuevo */
             animation: strongWind 3s ease-in-out infinite alternate;
         }
-
         .flower-bloom { 
             transform-origin: center; 
             transform-box: fill-box;
             animation: bloomFlower 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
         }
-        
         @keyframes strongWind {
-            /* Ángulo mayor (4deg) y desplazamiento lateral (3px) para efecto viento */
             0% { transform: rotate(-4deg) translateX(-3px); }
             100% { transform: rotate(4deg) translateX(3px); }
         }
-
         @keyframes bloomFlower { 
             0% { transform: scale(0) rotate(-15deg); opacity: 0; } 
             100% { transform: scale(1) rotate(0deg); opacity: 1; } 
         }
-
-        @keyframes popIn { 
-            0% { transform: scale(0); } 
-            100% { transform: scale(1); } 
-        }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body class="bg-thac-bg text-slate-800 h-[100dvh] flex flex-col overflow-hidden selection:bg-blue-200">
@@ -105,8 +99,7 @@
             </div>
 
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 mb-4 h-48 p-4 flex flex-col items-center justify-center relative overflow-hidden">
-                <div id="bonsai-container" class="w-full h-full flex items-center justify-center">
-                    </div>
+                <div id="bonsai-container" class="w-full h-full flex items-center justify-center"></div>
                 <div class="absolute top-3 left-4 bg-green-50 text-green-800 px-3 py-1 rounded-full text-[10px] font-extrabold border border-green-100 flex items-center gap-1 shadow-sm uppercase tracking-wider">
                     <span>🌱</span> <span id="bonsai-level-text">Semilla</span>
                 </div>
@@ -117,9 +110,7 @@
                     <div class="text-blue-100 text-xs font-bold uppercase mb-1">Objetivo Diario</div>
                     <div class="text-2xl font-bold">Fichar Estudio 📝</div>
                 </div>
-                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                </div>
+                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
             </button>
 
             <div class="mb-4">
@@ -127,14 +118,12 @@
                     <span>Misiones de Bienestar</span>
                     <span id="quests-arrow" class="transition-transform duration-200">▼</span>
                 </button>
-                <div id="quests-container" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3 transition-all">
-                    </div>
+                <div id="quests-container" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3 transition-all"></div>
             </div>
 
             <div class="mb-6">
                 <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Logros</h2>
-                <div id="badges-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                    </div>
+                <div id="badges-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
             </div>
             
             <div class="h-10"></div>
@@ -142,7 +131,6 @@
 
         <div id="page-study" class="page">
             <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Registro Diario</h2>
-            
             <div id="study-panel" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-8">
                 <div id="study-form">
                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Materia (Opcional)</label>
@@ -157,24 +145,18 @@
                         </select>
                         <div class="absolute right-4 top-4 pointer-events-none text-slate-400">▼</div>
                     </div>
-                    <button onclick="confirmStudy()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-300 btn-press">
-                        CONFIRMAR SESIÓN
-                    </button>
+                    <button onclick="confirmStudy()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-300 btn-press">CONFIRMAR SESIÓN</button>
                 </div>
-
                 <div id="study-done" class="hidden text-center py-4">
                     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl animate-bounce">🛡️</div>
                     <h3 class="font-bold text-lg text-green-800">¡Registrado!</h3>
                     <p id="done-msg" class="text-slate-500 text-sm mt-1">Buen trabajo hoy.</p>
                 </div>
             </div>
-
             <h3 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Distribución</h3>
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative">
                 <canvas id="studyChart"></canvas>
-                <div id="no-data-msg" class="absolute inset-0 flex items-center justify-center bg-white/80 text-sm text-slate-400">
-                    Ficha tu primer día para ver datos
-                </div>
+                <div id="no-data-msg" class="absolute inset-0 flex items-center justify-center bg-white/80 text-sm text-slate-400">Ficha tu primer día para ver datos</div>
             </div>
             <div class="h-10"></div>
         </div>
@@ -191,48 +173,35 @@
                 <button onclick="addPlan()" class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs font-bold btn-press shadow-sm hover:bg-blue-200 transition">+ Nuevo</button>
             </div>
             <div id="plans-container" class="space-y-3 mb-8"></div>
-
             <h3 class="font-bold text-slate-800 text-lg mb-4">⏳ Cuenta Atrás THAC</h3>
             <div id="countdown-container" class="space-y-4"></div>
-            
             <div class="h-10"></div>
         </div>
 
         <div id="page-relax" class="page">
             <h2 class="text-2xl font-bold text-slate-900 mb-6 mt-2">Botiquín Zen</h2>
-            
             <div class="flex p-1 bg-slate-100 rounded-xl mb-6">
                 <button onclick="switchZen('breath')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-slate-800 shadow-sm" data-tab="breath">Respirar</button>
                 <button onclick="switchZen('bubbles')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-500" data-tab="bubbles">Burbujas</button>
                 <button onclick="switchZen('body')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-500" data-tab="body">Cuerpo</button>
             </div>
-
             <div id="zen-breath" class="zen-content">
                 <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100 text-center relative overflow-hidden">
                     <h3 class="font-bold text-blue-900 mb-6">Técnica 4-4-8</h3>
-                    <div id="breath-circle" class="breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative">
-                        <span id="breath-text" class="text-slate-400 font-bold text-xl">Start</span>
-                    </div>
-                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-sm font-bold btn-press shadow-lg shadow-blue-200">
-                        Iniciar Respiración
-                    </button>
+                    <div id="breath-circle" class="breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative"><span id="breath-text" class="text-slate-400 font-bold text-xl">Start</span></div>
+                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-sm font-bold btn-press shadow-lg shadow-blue-200">Iniciar Respiración</button>
                 </div>
             </div>
-
             <div id="zen-bubbles" class="zen-content hidden">
-                <div class="bg-slate-200 rounded-2xl p-4 shadow-inner">
-                    <div id="bubble-grid" class="grid grid-cols-5 gap-3"></div>
-                </div>
+                <div class="bg-slate-200 rounded-2xl p-4 shadow-inner"><div id="bubble-grid" class="grid grid-cols-5 gap-3"></div></div>
                 <button onclick="resetBubbles()" class="w-full mt-4 bg-white text-slate-600 py-3 rounded-xl font-bold text-sm border border-slate-200 btn-press">🔄 Nueva lámina</button>
             </div>
-
             <div id="zen-body" class="zen-content hidden space-y-3">
                 <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🦒</div><div><div class="font-bold text-slate-800">Cuello</div><div class="text-xs text-slate-500">Gira suavemente a los lados (10s)</div></div></div>
                 <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🤷‍♀️</div><div><div class="font-bold text-slate-800">Hombros</div><div class="text-xs text-slate-500">Rotaciones hacia atrás (10 reps)</div></div></div>
                 <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🤲</div><div><div class="font-bold text-slate-800">Muñecas</div><div class="text-xs text-slate-500">Estira los flexores brazo recto</div></div></div>
                 <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🐈</div><div><div class="font-bold text-slate-800">Gato Sentado</div><div class="text-xs text-slate-500">Arquea espalda delante/atrás</div></div></div>
             </div>
-            
             <div class="h-10"></div>
         </div>
     </main>
@@ -246,7 +215,8 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v25_final_windy'; 
+        // --- LLAVE MAESTRA FIJA PARA EVITAR BORRADO ---
+        const DATA_KEY = 'thac_companion_final_db'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -311,6 +281,7 @@
             const stored = localStorage.getItem(DATA_KEY);
             if(stored) {
                 let loaded = JSON.parse(stored);
+                // Comprobaciones de integridad
                 if(!loaded.plans) loaded.plans = [];
                 if(!loaded.cookie) loaded.cookie = { date: '', msg: '' };
                 if(!loaded.wallet || loaded.wallet.length < 8) loaded.wallet = initialRewards();
@@ -336,7 +307,7 @@
             renderBonsai();
         }
 
-        // --- BONSÁI GENERATIVO (SAKURA SVG ANIMADO & REDISEÑADO) ---
+        // --- BONSÁI GENERATIVO ---
         function renderBonsai() {
             const c = appData.coins;
             const container = document.getElementById('bonsai-container');
@@ -350,35 +321,30 @@
             const blossomColor = "#fbcfe8";
             const blossomCenter = "#db2777";
 
-            // Sombra y Maceta Base
             let svgContent = `<ellipse cx="150" cy="235" rx="60" ry="6" fill="#000000" opacity="0.15"/>`;
             svgContent += `<path d="M100 200 L115 230 Q150 235 185 230 L200 200 Q150 195 100 200 Z" fill="${potColor}" stroke="#5b230d" stroke-width="1.5"/>`;
             svgContent += `<ellipse cx="150" cy="200" rx="50" ry="7" fill="${soilColor}"/>`;
 
-            // FASES
-            if (c >= 1) { // FASE 1: Semilla
+            if (c >= 1) { // FASE 1
                 levelText.textContent = "Semilla";
                  svgContent += `<path d="M150 200 Q150 190 148 185" stroke="#4ade80" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
                  svgContent += `<path d="M148 185 Q140 180 145 175 Q155 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
                  svgContent += `<path d="M148 185 Q156 180 151 175 Q141 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
             }
 
-            if (c >= 5) { // FASE 2: Brote Fuerte (REDISEÑADA)
+            if (c >= 5) { // FASE 2 MEJORADA (BONSÁI JOVEN)
                 levelText.textContent = "Brote";
                 svgContent += `<g class="foliage-sway">`;
-                // Tronco más ancho y cónico
                 svgContent += `<path d="M150 200 C155 180 145 160 150 145" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
-                // Ramas laterales
                 svgContent += `<path d="M150 165 Q130 155 125 145" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M150 155 Q170 150 175 140" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
-                // Copas de hojas compactas (estilo nube)
-                svgContent +=drawCloud(150, 140, 18, leafColorLight, leafColorDark); // Central
-                svgContent +=drawCloud(125, 145, 14, leafColorLight, leafColorDark); // Izq
-                svgContent +=drawCloud(175, 140, 14, leafColorLight, leafColorDark); // Der
+                svgContent +=drawCloud(150, 140, 18, leafColorLight, leafColorDark);
+                svgContent +=drawCloud(125, 145, 14, leafColorLight, leafColorDark);
+                svgContent +=drawCloud(175, 140, 14, leafColorLight, leafColorDark);
                  svgContent += `</g>`;
             }
 
-            if (c >= 10) { // FASE 3: Arbolito
+            if (c >= 10) { // FASE 3
                 levelText.textContent = "Arbolito";
                 svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C155 170 140 150 145 120" stroke="${trunkColor}" stroke-width="7" stroke-linecap="round" fill="none"/>`;
@@ -390,7 +356,7 @@
                 svgContent += `</g>`;
             }
 
-            if (c >= 15) { // FASE 4: Creciendo
+            if (c >= 15) { // FASE 4
                 levelText.textContent = "Creciendo";
                 svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C158 170 135 140 150 100" stroke="${trunkColor}" stroke-width="9" stroke-linecap="round" fill="none"/>`;
@@ -402,7 +368,7 @@
                 svgContent += `</g>`;
             }
 
-             if (c >= 20) { // FASE 5: Formado
+             if (c >= 20) { // FASE 5
                 levelText.textContent = "Formado";
                 svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C165 170 125 140 155 90" stroke="${trunkColor}" stroke-width="11" stroke-linecap="round" fill="none"/>`;
@@ -416,7 +382,7 @@
                 svgContent += `</g>`;
             }
 
-            if (c >= 25) { // FASE 6: Frondoso
+            if (c >= 25) { // FASE 6
                 levelText.textContent = "Frondoso";
                 svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
@@ -431,7 +397,7 @@
                 svgContent += `</g>`;
             }
 
-             if (c >= 30) { // FASE 7: Capullos
+             if (c >= 30) { // FASE 7
                 levelText.textContent = "Capullos";
                 svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
@@ -443,27 +409,24 @@
                 svgContent +=drawCloud(75, 95, 24, leafColorLight, leafColorDark);
                 svgContent +=drawCloud(120, 75, 19, leafColorLight, leafColorDark);
                 svgContent +=drawCloud(185, 95, 17, leafColorLight, leafColorDark);
-                // Capullos
                 svgContent +=drawBud(145, 70, blossomColor); svgContent +=drawBud(165, 85, blossomColor);
                 svgContent +=drawBud(205, 110, blossomColor); svgContent +=drawBud(225, 120, blossomColor);
                 svgContent +=drawBud(65, 90, blossomColor); svgContent +=drawBud(85, 100, blossomColor);
                 svgContent += `</g>`;
             }
 
-            if (c >= 35) { // FASE 8: Legendario (Sakura)
+            if (c >= 35) { // FASE 8
                 levelText.textContent = "Legendario";
                 svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M155 100 Q125 90 120 75" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
-                // Copas rosadas
                 svgContent +=drawCloud(155, 80, 33, blossomColor, blossomCenter);
                 svgContent +=drawCloud(215, 115, 27, blossomColor, blossomCenter);
                 svgContent +=drawCloud(75, 95, 24, blossomColor, blossomCenter);
                 svgContent +=drawCloud(120, 75, 19, blossomColor, blossomCenter);
                 svgContent +=drawCloud(185, 95, 17, blossomColor, blossomCenter);
-                // Flores animadas
                 svgContent +=drawSakura(140, 65, blossomColor, blossomCenter, "0.1s"); svgContent +=drawSakura(170, 80, blossomColor, blossomCenter, "0.3s");
                 svgContent +=drawSakura(200, 105, blossomColor, blossomCenter, "0.5s"); svgContent +=drawSakura(230, 125, blossomColor, blossomCenter, "0.7s");
                 svgContent +=drawSakura(60, 85, blossomColor, blossomCenter, "0.2s"); svgContent +=drawSakura(90, 105, blossomColor, blossomCenter, "0.4s");
@@ -500,7 +463,34 @@
             </g>`;
         }
 
-        // --- RESTO DE FUNCIONES (Planes, Cookie, Quests, etc.) ---
+        // --- BACKUP & RESTORE ---
+        function exportData() {
+            const dataStr = btoa(JSON.stringify(appData));
+            navigator.clipboard.writeText(dataStr).then(() => Swal.fire('¡Copiado!', 'Guarda este código en un lugar seguro.', 'success'));
+        }
+        
+        function importData() {
+            Swal.fire({
+                title: 'Pegar código',
+                input: 'text',
+                showCancelButton: true,
+                confirmButtonText: 'Restaurar',
+                confirmButtonColor: '#0f172a'
+            }).then((result) => {
+                if (result.value) {
+                    try {
+                        const parsed = JSON.parse(atob(result.value));
+                        appData = parsed;
+                        save();
+                        location.reload();
+                    } catch(e) {
+                        Swal.fire('Error', 'Código inválido', 'error');
+                    }
+                }
+            });
+        }
+
+        // --- RESTO DE FUNCIONES ---
         function renderPlans() {
             const container = document.getElementById('plans-container');
             container.innerHTML = '';
@@ -703,7 +693,7 @@
         function initBubbles() { const grid = document.getElementById('bubble-grid'); grid.innerHTML = ''; for(let i=0; i<20; i++) grid.innerHTML += `<div class="bubble w-12 h-12 rounded-full cursor-pointer" onclick="popBubble(this)"></div>`; }
         function popBubble(el) { if(!el.classList.contains('popped')) { el.classList.add('popped'); if(navigator.vibrate) navigator.vibrate(50); } }
         function resetBubbles() { initBubbles(); }
-        function openSettings() { Swal.fire({ title: 'Ajustes', html: `<div class="grid gap-3"><button onclick="simulateDays(35)" class="bg-pink-100 text-pink-800 p-4 rounded-xl font-bold border border-pink-200">🌸 Ver Sakura Full (35 días)</button><button onclick="simulateDays(5)" class="bg-yellow-100 text-yellow-800 p-4 rounded-xl font-bold border border-yellow-200">🧪 Avanzar 5 Días</button><button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200">⚠️ Resetear Todo</button></div>`, showConfirmButton: false, showCloseButton: true }); }
+        function openSettings() { Swal.fire({ title: 'Ajustes', html: `<div class="grid gap-3"><button onclick="exportData()" class="bg-blue-100 text-blue-800 p-4 rounded-xl font-bold border border-blue-200">📤 Guardar Copia</button><button onclick="importData()" class="bg-green-100 text-green-800 p-4 rounded-xl font-bold border border-green-200">📥 Cargar Copia</button><button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200">⚠️ Resetear Todo</button></div>`, showConfirmButton: false, showCloseButton: true }); }
         function resetApp() { if(confirm("¿Seguro?")) { localStorage.removeItem(DATA_KEY); location.reload(); } }
 
         init();
