@@ -44,11 +44,11 @@
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* BONSÁI ANIMADO (FIX MEJORADO) */
-        /* Importante: transform-origin en coordenadas exactas de la maceta (150, 200) */
+        /* BONSÁI ANIMADO (DINÁMICO) */
         .tree-anim { 
-            transform-origin: 150px 200px; 
-            animation: treeSway 5s ease-in-out infinite alternate; 
+            transform-origin: 150px 200px; /* Pivote en la base del tronco */
+            /* Duración reducida a 4s y ángulo aumentado para más dinamismo */
+            animation: treeSway 4s ease-in-out infinite alternate; 
         }
         
         .flower-bloom { 
@@ -58,8 +58,8 @@
         }
         
         @keyframes treeSway { 
-            0% { transform: rotate(-2deg); } 
-            100% { transform: rotate(2deg); } 
+            0% { transform: rotate(-5deg); } /* Ángulo aumentado */
+            100% { transform: rotate(5deg); } /* Ángulo aumentado */
         }
         
         @keyframes bloomFlower { 
@@ -244,7 +244,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v24_final_animated'; 
+        const DATA_KEY = 'thac_app_v24_final_dynamic'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
