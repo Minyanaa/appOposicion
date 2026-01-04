@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THAC Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: {
+                        thac: {
+                            navy: '#0f172a',    /* Slate 900 */
+                            blue: '#1d4ed8',    /* Blue 700 */
+                            gold: '#b45309',    /* Amber 700 */
+                            bg: '#f8fafc',      /* Slate 50 */
+                            card: '#ffffff'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        /* Ocultar scrollbar pero permitir scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Animaciones suaves */
+        .page { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .page.active { display: block; opacity: 1; }
+        
+        .btn-press:active { transform: scale(0.97); }
+    </style>
+</head>
+<body class="bg-thac-bg text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <main id="app-content" class="flex-1 overflow-y-auto no-scrollbar p-6 pb-24">
+        
+        <div id="page-home" class="page active">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-thac-navy">Hola, Opositora 👋</h1>
+                    <p id="date-display" class="text-slate-500 text-sm font-medium">Domingo, 04 Enero</p>
+                </div>
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100">
+                    ⚖️
+                </div>
+            </div>
+
+            <div class="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 text-white shadow-xl mb-8 overflow-hidden">
+                <div class="absolute right-[-20px] bottom-[-20px] text-9xl opacity-10 select-none">⚖️</div>
+                
+                <p class="text-xs font-bold tracking-[0.2em] text-slate-400 mb-2">THAC CLUB CARD</p>
+                <div class="flex items-baseline gap-2">
+                    <span id="coin-display" class="text-6xl font-extrabold tracking-tighter">0</span>
+                    <span class="text-lg font-medium text-slate-300">Coins</span>
+                </div>
+                <div class="mt-4 flex items-center gap-2">
+                    <span id="rank-badge" class="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold border border-white/20">
+                        Inspectora Junior
+                    </span>
+                </div>
+            </div>
+
+            <h2 class="text-lg font-bold text-thac-navy mb-4">Tu Panel</h2>
+            
+            <button onclick="navTo('study')" class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl p-6 shadow-lg shadow-blue-200 mb-4 flex items-center justify-between btn-press transition-all">
+                <div class="flex flex-col items-start">
+                    <span class="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">Registro Diario</span>
+                    <span class="text-xl font-bold">Fichar Estudio 📝</span>
+                </div>
+                <div class="bg-blue-500/30 p-2 rounded-full">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </button>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="navTo('wallet')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-2 btn-press h-32">
+                    <span class="text-3xl">🎁</span>
+                    <span class="font-bold text-slate-700">Cartera</span>
+                </button>
+                <button onclick="navTo('relax')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-2 btn-press h-32">
+                    <span class="text-3xl">🧘‍♀️</span>
+                    <span class="font-bold text-slate-700">Zona Zen</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="page-study" class="page">
+            <h2 class="text-2xl font-bold text-thac-navy mb-2">Control de Jornada</h2>
+            <p class="text-slate-500 mb-8">La constancia construye imperios.</p>
+
+            <div id="study-status-card" class="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-100 mb-8">
+                </div>
+            
+            <div id="bonus-container" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3 items-start">
+                <div class="text-2xl">🏆</div>
+                <div>
+                    <h4 class="font-bold text-amber-800">¡Racha Imparable!</h4>
+                    <p class="text-sm text-amber-700 leading-tight mt-1">Has alcanzado un hito. Revisa tu cartera, quizás haya aparecido algo nuevo...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-wallet" class="page">
+            <h2 class="text-2xl font-bold text-thac-navy mb-2">Recompensas</h2>
+            <p class="text-slate-500 mb-6">Canjea tus puntos por vida real.</p>
+            
+            <div id="wallet-list" class="space-y-4">
+                </div>
+        </div>
+
+        <div id="page-relax" class="page">
+            <h2 class="text-2xl font-bold text-thac-navy mb-2">Zona Zen</h2>
+            <p class="text-slate-500 mb-6">Herramientas de emergencia.</p>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 mb-6">
+                <h3 class="font-bold text-slate-700 mb-4">🎧 Audio Terapia</h3>
+                <select id="audio-select" class="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option value="">Selecciona pista...</option>
+                    <option value="morning">☀️ Motivación Mañanera</option>
+                    <option value="panic">🆘 Botón de Pánico</option>
+                    <option value="love">❤️ Mensaje Personal</option>
+                </select>
+                <button onclick="playAudio()" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl btn-press">Reproducir</button>
+            </div>
+
+            <div class="bg-blue-50 rounded-2xl p-6 border border-blue-100">
+                <h3 class="font-bold text-blue-900 mb-2">🫁 Respiración 4-4-8</h3>
+                <div id="breath-guide" class="text-center py-8">
+                    <div id="breath-text" class="text-3xl font-black text-blue-600 transition-all duration-300">LISTA?</div>
+                    <div class="w-full bg-blue-200 h-2 rounded-full mt-6 overflow-hidden">
+                        <div id="breath-bar" class="h-full bg-blue-600 w-0 transition-all duration-100 ease-linear"></div>
+                    </div>
+                </div>
+                <button onclick="startBreathing()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl btn-press">Iniciar Guía</button>
+            </div>
+        </div>
+
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-white border-t border-slate-200 pb-safe pt-2 px-6 flex justify-between items-center z-50 h-[80px]">
+        <button onclick="navTo('home')" class="nav-btn flex flex-col items-center gap-1 text-blue-600 w-16" data-target="home">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span class="text-[10px] font-bold">Inicio</span>
+        </button>
+        <button onclick="navTo('study')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 w-16" data-target="study">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <span class="text-[10px] font-bold">Fichar</span>
+        </button>
+        <button onclick="navTo('wallet')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 w-16" data-target="wallet">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+            <span class="text-[10px] font-bold">Cartera</span>
+        </button>
+        <button onclick="navTo('relax')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 w-16" data-target="relax">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="text-[10px] font-bold">Zen</span>
+        </button>
+    </nav>
+
+    <script>
+        // --- ESTADO Y DATOS ---
+        const DATA_KEY = 'thac_app_v1';
+        
+        let appData = {
+            coins: 0,
+            lastStudyDate: '',
+            wallet: [
+                {id: 1, title: "Cena Gourmet", active: true},
+                {id: 2, title: "Masaje de Espalda", active: true},
+                {id: 3, title: "Cine VIP + Palomitas", active: true},
+                {id: 4, title: "Escapada Domingo", active: true},
+                {id: 5, title: "Vale Comodín", active: true}
+            ]
+        };
+
+        // --- INICIALIZACIÓN ---
+        function init() {
+            // Cargar datos del LocalStorage
+            const stored = localStorage.getItem(DATA_KEY);
+            if (stored) {
+                appData = JSON.parse(stored);
+            }
+            
+            // Poner fecha hoy
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('date-display').textContent = new Date().toLocaleDateString('es-ES', options);
+            
+            updateUI();
+        }
+
+        function save() {
+            localStorage.setItem(DATA_KEY, JSON.stringify(appData));
+            updateUI();
+        }
+
+        // --- UI UPDATES ---
+        function updateUI() {
+            // Monedas y Rango
+            document.getElementById('coin-display').textContent = appData.coins;
+            let rank = "Novata";
+            if(appData.coins >= 5) rank = "Constante";
+            if(appData.coins >= 15) rank = "Experta";
+            if(appData.coins >= 30) rank = "Inspectora";
+            document.getElementById('rank-badge').textContent = rank;
+
+            // Render Wallet
+            const walletContainer = document.getElementById('wallet-list');
+            walletContainer.innerHTML = '';
+            appData.wallet.forEach(item => {
+                const isUsed = !item.active;
+                const html = `
+                <div class="relative overflow-hidden rounded-xl p-4 border ${isUsed ? 'bg-slate-100 border-slate-200' : 'bg-white border-slate-100 shadow-sm'}">
+                    <div class="flex justify-between items-center relative z-10">
+                        <div>
+                            <h3 class="font-bold ${isUsed ? 'text-slate-400 line-through' : 'text-slate-800'}">${item.title}</h3>
+                            <span class="text-xs font-bold tracking-wider ${isUsed ? 'text-slate-400' : 'text-green-600'}">
+                                ${isUsed ? 'CANJEADO' : 'DISPONIBLE'}
+                            </span>
+                        </div>
+                        ${!isUsed ? `<button onclick="redeem(${item.id})" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold btn-press">Usar</button>` : ''}
+                    </div>
+                    ${!isUsed ? '<div class="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>' : ''}
+                </div>
+                `;
+                walletContainer.insertAdjacentHTML('beforeend', html);
+            });
+
+            // Render Study Page
+            const today = new Date().toISOString().split('T')[0];
+            const hasStudied = appData.lastStudyDate === today;
+            const studyContainer = document.getElementById('study-status-card');
+            
+            // MODO PRUEBAS: Si quieres probar, descomenta la siguiente linea para fichar siempre
+            // const hasStudied = false; 
+
+            if (hasStudied) {
+                studyContainer.innerHTML = `
+                    <div class="text-6xl mb-4">🛡️</div>
+                    <h3 class="text-xl font-bold text-slate-800">Misión Cumplida</h3>
+                    <p class="text-slate-500 text-sm mt-2">Ya has fichado hoy. Descansa y recupera fuerzas.</p>
+                `;
+            } else {
+                studyContainer.innerHTML = `
+                    <div class="text-6xl mb-4">📚</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">¿Jornada Productiva?</h3>
+                    <button onclick="confirmStudy()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-4 rounded-xl shadow-lg shadow-blue-200 btn-press">
+                        CONFIRMAR DÍA (+1)
+                    </button>
+                `;
+            }
+
+            // Bonus check
+            const bonusDiv = document.getElementById('bonus-container');
+            if(appData.coins > 0 && appData.coins % 5 === 0) {
+                bonusDiv.classList.remove('hidden');
+            } else {
+                bonusDiv.classList.add('hidden');
+            }
+        }
+
+        // --- ACCIONES ---
+        function navTo(pageId) {
+            // Hide all
+            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-blue-600');
+                el.classList.add('text-slate-400');
+            });
+
+            // Show target
+            document.getElementById('page-' + pageId).classList.add('active');
+            
+            // Highlight Nav
+            const btn = document.querySelector(`.nav-btn[data-target="${pageId}"]`);
+            if(btn) {
+                btn.classList.remove('text-slate-400');
+                btn.classList.add('text-blue-600');
+            }
+            
+            // Scroll top
+            document.getElementById('app-content').scrollTo(0,0);
+        }
+
+        function confirmStudy() {
+            // Confeti
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#1d4ed8', '#fbbf24', '#0f172a']
+            });
+
+            appData.coins += 1;
+            appData.lastStudyDate = new Date().toISOString().split('T')[0];
+            save();
+        }
+
+        function redeem(id) {
+            if(!confirm("¿Seguro que quieres gastar este vale? Es irreversible.")) return;
+            
+            const item = appData.wallet.find(i => i.id === id);
+            if(item) {
+                item.active = false;
+                save();
+                confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 } });
+            }
+        }
+
+        // --- RESPIRACIÓN ---
+        function startBreathing() {
+            const textEl = document.getElementById('breath-text');
+            const barEl = document.getElementById('breath-bar');
+            
+            const cycle = [
+                { t: "INHALA", time: 4000, color: "bg-blue-600" },
+                { t: "MANTÉN", time: 4000, color: "bg-amber-500" },
+                { t: "EXHALA", time: 8000, color: "bg-green-500" }
+            ];
+
+            let step = 0;
+            
+            function runStep() {
+                if(step >= 3) {
+                    textEl.textContent = "¡Muy bien!";
+                    barEl.style.width = "0%";
+                    return;
+                }
+                
+                const current = cycle[step];
+                textEl.textContent = current.t;
+                barEl.className = `h-full transition-all ease-linear ${current.color}`;
+                
+                // Reset bar to 0 first immediately
+                barEl.style.transition = 'none';
+                barEl.style.width = '0%';
+                
+                setTimeout(() => {
+                    barEl.style.transition = `width ${current.time}ms linear`;
+                    barEl.style.width = '100%';
+                }, 50);
+
+                setTimeout(() => {
+                    step++;
+                    if(step === 3) step = 0; // Loop infinito? Mejor hacemos 2 ciclos
+                     // Aquí he simplificado para la demo
+                    runStep();
+                }, current.time);
+            }
+            
+            // Run 1 full cycle for demo
+            textEl.textContent = "PREPARA...";
+            setTimeout(() => { runStep(); }, 1000);
+        }
+
+        // --- AUDIO SIMULATOR ---
+        function playAudio() {
+            const val = document.getElementById('audio-select').value;
+            if(!val) return alert("Selecciona un audio primero");
+            alert(`Reproduciendo: ${val}.mp3 (Asegúrate de poner los archivos reales en la carpeta)`);
+            // var audio = new Audio('audios/' + val + '.mp3');
+            // audio.play();
+        }
+
+        // START
+        init();
+
+    </script>
+</body>
+</html>
