@@ -34,7 +34,7 @@
         .btn-press:active { transform: scale(0.96); transition: transform 0.1s; }
         
         /* Badges Animations */
-        .badge-locked { filter: grayscale(100%); opacity: 0.4; }
+        .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
     </style>
@@ -78,7 +78,7 @@
             </div>
 
             <div class="mb-6">
-                <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Logros</h2>
+                <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Logros (Toca para ver)</h2>
                 <div id="badges-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
             </div>
 
@@ -203,7 +203,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v9_no_energy'; 
+        const DATA_KEY = 'thac_app_v10_final'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -212,11 +212,11 @@
         ];
 
         const BADGES = [
-            { id: 'first_step', icon: '🐣', title: 'Primer paso', desc: 'Fichar 1 día', condition: (d) => d.coins >= 1 },
-            { id: 'week_warrior', icon: '⚔️', title: 'Semana a tope', desc: 'Fichar 5 días', condition: (d) => d.coins >= 5 },
-            { id: 'weekend', icon: '🏖️', title: 'Finde', desc: 'Estudiar en Sábado', condition: (d) => d.badges.includes('weekend') },
-            { id: 'pro', icon: '👩‍⚖️', title: 'Experta', desc: '20 días totales', condition: (d) => d.coins >= 20 },
-            { id: 'master', icon: '👑', title: 'Inspectora', desc: '50 días totales', condition: (d) => d.coins >= 50 }
+            { id: 'first_step', icon: '🐣', title: 'Primer paso', desc: 'Ficha tu primer día de estudio', condition: (d) => d.coins >= 1 },
+            { id: 'week_warrior', icon: '⚔️', title: 'Semana a tope', desc: 'Acumula 5 días de estudio', condition: (d) => d.coins >= 5 },
+            { id: 'weekend', icon: '🏖️', title: 'Finde', desc: 'Estudia un Sábado', condition: (d) => d.badges.includes('weekend') },
+            { id: 'pro', icon: '👩‍⚖️', title: 'Experta', desc: 'Alcanza los 20 días acumulados', condition: (d) => d.coins >= 20 },
+            { id: 'master', icon: '👑', title: 'Inspectora', desc: 'Leyenda: 50 días de estudio', condition: (d) => d.coins >= 50 }
         ];
 
         const QUOTES = [
@@ -228,15 +228,7 @@
             "Hoy sumas. Mañana recoges."
         ];
 
-        let appData = { 
-            coins: 0, 
-            lastStudy: '', 
-            streak: 0,
-            wallet: initialRewards(),
-            badges: [],
-            history: [] 
-        };
-
+        let appData = { coins: 0, lastStudy: '', streak: 0, wallet: initialRewards(), badges: [], history: [] };
         let studyChartInstance = null;
 
         function initialRewards() {
@@ -277,23 +269,17 @@
             if (!appData.lastStudy) return 1;
             const last = new Date(appData.lastStudy);
             const today = new Date(todayStr);
-            const diffTime = Math.abs(today - last);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-
+            const diffDays = Math.ceil(Math.abs(today - last) / (1000 * 60 * 60 * 24)); 
             if (diffDays === 0) return appData.streak; 
-            if (diffDays === 1) return appData.streak + 1; 
             if (diffDays <= 3) return appData.streak + 1; // Margen descanso
-
             return 1; 
         }
 
         function updateUI() {
             document.getElementById('coin-display').textContent = appData.coins;
             document.getElementById('streak-display').textContent = appData.streak;
-
             const today = new Date().toISOString().split('T')[0];
             const hasStudied = appData.lastStudy === today;
-            
             if(hasStudied) {
                 document.getElementById('study-form').classList.add('hidden');
                 document.getElementById('study-done').classList.remove('hidden');
@@ -301,8 +287,10 @@
                 document.getElementById('study-form').classList.remove('hidden');
                 document.getElementById('study-done').classList.add('hidden');
             }
+            renderRewards();
+        }
 
-            // Rewards
+        function renderRewards() {
             const rList = document.getElementById('rewards-list');
             rList.innerHTML = '';
             appData.wallet.forEach(item => {
@@ -335,91 +323,57 @@
         function confirmStudy() {
             const todayStr = new Date().toISOString().split('T')[0];
             const subject = document.getElementById('subject-select').value;
-            
             appData.streak = checkStreak(todayStr);
             appData.coins++;
             appData.lastStudy = todayStr;
             appData.history.push({ date: todayStr, subject: subject });
-
-            // Badge Triggers
-            const day = new Date().getDay();
-            if (day === 6) { if(!appData.badges.includes('weekend')) appData.badges.push('weekend'); }
-
+            if (new Date().getDay() === 6 && !appData.badges.includes('weekend')) appData.badges.push('weekend');
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            
-            // Random message
-            const msgs = ["¡Enorme!", "Un día más cerca.", "Constancia pura.", "A descansar, te lo mereces."];
-            document.getElementById('done-msg').textContent = msgs[Math.floor(Math.random() * msgs.length)];
-
+            document.getElementById('done-msg').textContent = ["¡Enorme!", "Un día más cerca.", "Constancia pura.", "A descansar."][Math.floor(Math.random() * 4)];
             save();
             updateChart();
-            checkUnlocks();
-        }
-
-        // --- CHECKS UNLOCKS ---
-        function checkUnlocks() {
             const unlocked = appData.wallet.find(i => i.cost === appData.coins);
-            if(unlocked) {
-                setTimeout(() => {
-                    Swal.fire({
-                        title: '¡PREMIO NUEVO!',
-                        text: unlocked.title,
-                        icon: 'success',
-                        confirmButtonText: 'Ver'
-                    }).then((r) => { if(r.isConfirmed) navTo('rewards'); });
-                }, 1000);
-            }
+            if(unlocked) setTimeout(() => Swal.fire({ title: '¡PREMIO NUEVO!', text: unlocked.title, icon: 'success' }), 1000);
         }
 
-        // --- GRAPHICS ---
-        function updateChart() {
-            const ctx = document.getElementById('studyChart');
-            if(appData.history.length === 0) {
-                document.getElementById('no-data-msg').style.display = 'flex';
-                return;
-            }
-            document.getElementById('no-data-msg').style.display = 'none';
-
-            const counts = {};
-            appData.history.forEach(h => { counts[h.subject] = (counts[h.subject] || 0) + 1; });
-
-            const data = {
-                labels: Object.keys(counts),
-                datasets: [{
-                    data: Object.values(counts),
-                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#64748b'],
-                    borderWidth: 0
-                }]
-            };
-
-            if(studyChartInstance) {
-                studyChartInstance.data = data;
-                studyChartInstance.update();
-            } else {
-                studyChartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: data,
-                    options: {
-                        responsive: true,
-                        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: {family: "'Plus Jakarta Sans'"} } } },
-                        cutout: '70%'
-                    }
-                });
-            }
-        }
-
+        // --- BADGE INTERACTION ---
         function renderBadges() {
             const container = document.getElementById('badges-container');
             container.innerHTML = '';
             BADGES.forEach(b => {
-                const isUnlocked = b.condition(appData);
+                const isUnlocked = b.condition(appData) || appData.badges.includes(b.id);
                 const styleClass = isUnlocked ? 'badge-unlocked bg-white border-blue-100 shadow-sm' : 'badge-locked bg-slate-50 border-slate-100';
+                
+                // AÑADIDO: ONCLICK para ver info
                 container.innerHTML += `
-                    <div class="flex-shrink-0 w-20 p-2 rounded-xl border flex flex-col items-center text-center ${styleClass}">
+                    <div onclick="showBadgeInfo('${b.id}')" class="flex-shrink-0 w-20 p-2 rounded-xl border flex flex-col items-center text-center ${styleClass} cursor-pointer btn-press">
                         <div class="text-2xl mb-1">${b.icon}</div>
                         <div class="text-[10px] font-bold text-slate-700 leading-tight">${b.title}</div>
                     </div>`;
             });
+        }
+
+        function showBadgeInfo(id) {
+            const b = BADGES.find(x => x.id === id);
+            const isUnlocked = b.condition(appData) || appData.badges.includes(id);
+            Swal.fire({
+                icon: isUnlocked ? 'success' : 'info',
+                title: b.title,
+                text: b.desc,
+                footer: isUnlocked ? '✅ ¡Conseguido!' : '🔒 Sigue esforzándote',
+                confirmButtonColor: '#0f172a'
+            });
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('studyChart');
+            if(appData.history.length === 0) { document.getElementById('no-data-msg').style.display = 'flex'; return; }
+            document.getElementById('no-data-msg').style.display = 'none';
+            const counts = {};
+            appData.history.forEach(h => { counts[h.subject] = (counts[h.subject] || 0) + 1; });
+            const data = { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#64748b'], borderWidth: 0 }] };
+            if(studyChartInstance) { studyChartInstance.data = data; studyChartInstance.update(); } 
+            else { studyChartInstance = new Chart(ctx, { type: 'doughnut', data: data, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: {family: "'Plus Jakarta Sans'"} } } }, cutout: '70%' } }); }
         }
 
         function renderCountdowns() {
@@ -428,8 +382,7 @@
             const today = new Date();
             EXAMS.forEach(exam => {
                 const examDate = new Date(exam.date);
-                const diff = examDate - today;
-                const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                const daysLeft = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
                 container.innerHTML += `
                     <div class="p-5 rounded-2xl border bg-white border-slate-200 shadow-sm flex justify-between items-center">
                         <div><div class="text-xs font-bold uppercase opacity-50 mb-1 text-slate-500">${exam.date}</div><div class="font-extrabold text-lg text-slate-800">${exam.name}</div></div>
@@ -438,32 +391,31 @@
             });
         }
 
-        // --- MODO DIOS: SIMULACIÓN ---
         function simulateDays(days) {
             appData.coins += days;
             appData.streak += days; 
-            // Añadimos historial fake para que el gráfico no se rompa
-            for(let i=0; i<days; i++) {
-                appData.history.push({date: 'simulated', subject: 'Simulacro'});
-            }
-            save();
-            Swal.close();
-            checkUnlocks();
-            updateChart();
-            
-            const toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 2000});
-            toast.fire({icon: 'success', title: `+${days} Días simulados`});
+            for(let i=0; i<days; i++) appData.history.push({date: 'simulated', subject: 'Simulacro'});
+            save(); Swal.close(); updateChart();
+            Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 2000}).fire({icon: 'success', title: `+${days} Días simulados`});
         }
 
-        // NAVIGATION & UTILS
         function redeem(id) {
-            Swal.fire({ title: '¿Canjear?', text: "Captura pantalla.", icon: 'warning', showCancelButton: true, confirmButtonText: 'Sí' }).then((r) => {
+            Swal.fire({
+                title: '¿Canjear?',
+                text: "Avisa a Javi de que has canjeado un premio.", // CAMBIO SOLICITADO
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, avisar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#0f172a'
+            }).then((r) => {
                 if (r.isConfirmed) {
                     const item = appData.wallet.find(i => i.id === id);
-                    if(item) { item.active = false; save(); Swal.fire('¡Hecho!', '', 'success'); }
+                    if(item) { item.active = false; save(); Swal.fire({title: '¡Disfrutado!', icon: 'success', confirmButtonColor: '#0f172a'}); }
                 }
             });
         }
+
         function navTo(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-'+page).classList.add('active');
@@ -471,21 +423,15 @@
             const btn = document.querySelector(`.nav-btn[data-target="${page}"]`);
             if(btn) { btn.classList.remove('text-slate-400'); btn.classList.add('text-blue-600'); }
         }
-        
-        // MENÚ DE AJUSTES CON EL BOTÓN DE SIMULACIÓN
+
         function openSettings() {
             Swal.fire({
                 title: 'Ajustes',
-                html: `
-                    <div class="grid gap-3">
-                        <button onclick="simulateDays(5)" class="bg-yellow-100 text-yellow-800 p-4 rounded-xl font-bold border border-yellow-200 hover:bg-yellow-200 transition">🧪 Avanzar 5 Días (Test)</button>
-                        <button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200 hover:bg-red-100 transition">⚠️ Resetear Todo</button>
-                    </div>
-                `,
+                html: `<div class="grid gap-3"><button onclick="simulateDays(5)" class="bg-yellow-100 text-yellow-800 p-4 rounded-xl font-bold border border-yellow-200">🧪 Avanzar 5 Días</button><button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200">⚠️ Resetear Todo</button></div>`,
                 showConfirmButton: false, showCloseButton: true
             });
         }
-        
+
         function resetApp() { if(confirm("¿Seguro?")) { localStorage.removeItem(DATA_KEY); location.reload(); } }
         function startBreathing() { Swal.fire({timer: 2000, showConfirmButton: false, title: 'Inhala...'}); }
         function playAudio() { Swal.fire({timer: 1000, showConfirmButton: false, icon: 'success', title: 'Reproduciendo'}); }
