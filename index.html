@@ -37,6 +37,9 @@
         .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        
+        /* Checkbox custom animation */
+        .quest-checkbox:checked + div { text-decoration: line-through; color: #10b981; opacity: 0.7; }
     </style>
 </head>
 <body class="bg-thac-bg text-slate-800 h-[100dvh] flex flex-col overflow-hidden selection:bg-blue-200">
@@ -75,6 +78,12 @@
                         <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Racha Actual</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="mb-6">
+                <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Misiones de Bienestar</h2>
+                <div id="quests-container" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
+                    </div>
             </div>
 
             <div class="mb-6">
@@ -165,15 +174,6 @@
                 </div>
                 <button onclick="startBreathing()" class="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-bold btn-press">Iniciar</button>
             </div>
-            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                <h3 class="font-bold text-slate-700 mb-4">Audios</h3>
-                <select id="audio-select" class="w-full p-3 bg-slate-50 rounded-lg mb-4 border border-slate-200 outline-none">
-                    <option value="morning">☀️ Motivación</option>
-                    <option value="panic">🆘 Anti-Estrés</option>
-                    <option value="love">❤️ Mensaje Especial</option>
-                </select>
-                <button onclick="playAudio()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold btn-press">Reproducir</button>
-            </div>
             <div class="h-10"></div>
         </div>
 
@@ -203,7 +203,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v10_final'; 
+        const DATA_KEY = 'thac_app_v12_quests'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -219,6 +219,15 @@
             { id: 'master', icon: '👑', title: 'Inspectora', desc: 'Leyenda: 50 días de estudio', condition: (d) => d.coins >= 50 }
         ];
 
+        const QUESTS_LIST = [
+            { id: 'sun', text: '☀️ Tomar 10 min el sol' },
+            { id: 'walk', text: '🚶‍♀️ Dar un paseo' },
+            { id: 'gym', text: '💪 Gym / Moverse' },
+            { id: 'water', text: '💧 Beber agua' },
+            { id: 'series', text: '📺 Cap. de Serie' },
+            { id: 'photo', text: '📸 Selfie a Javi' }
+        ];
+
         const QUOTES = [
             "La disciplina es hacer lo que tienes que hacer, incluso si no quieres.",
             "Un día más es un día menos para el objetivo.",
@@ -228,16 +237,27 @@
             "Hoy sumas. Mañana recoges."
         ];
 
-        let appData = { coins: 0, lastStudy: '', streak: 0, wallet: initialRewards(), badges: [], history: [] };
+        let appData = { 
+            coins: 0, 
+            lastStudy: '', 
+            streak: 0, 
+            wallet: initialRewards(), 
+            badges: [], 
+            history: [],
+            quests: { date: '', items: [] } 
+        };
         let studyChartInstance = null;
 
         function initialRewards() {
             return [
                 {id: 1, title: "Masaje Relajante", cost: 5, active: true},
-                {id: 2, title: "Cena Romántica", cost: 10, active: true},
-                {id: 3, title: "Cine + Palomitas", cost: 15, active: true},
-                {id: 4, title: "Vale Comodín", cost: 25, active: true},
-                {id: 5, title: "Escapada Finde", cost: 50, active: true}
+                {id: 2, title: "Entreno Gym Juntos", cost: 8, active: true},
+                {id: 3, title: "Cena en sitio Guay", cost: 12, active: true},
+                {id: 4, title: "Cine + Palomitas", cost: 18, active: true},
+                {id: 5, title: "Tu Comida Favorita", cost: 22, active: true},
+                {id: 6, title: "Brunch de Domingo", cost: 30, active: true},
+                {id: 7, title: "Vale Comodín", cost: 40, active: true},
+                {id: 8, title: "Escapada Finde", cost: 60, active: true}
             ];
         }
 
@@ -245,14 +265,16 @@
             const stored = localStorage.getItem(DATA_KEY);
             if(stored) {
                 let loaded = JSON.parse(stored);
-                if(!loaded.wallet) loaded.wallet = initialRewards();
+                if(!loaded.wallet || loaded.wallet.length < 8) loaded.wallet = initialRewards();
                 if(!loaded.history) loaded.history = [];
                 if(!loaded.badges) loaded.badges = [];
+                if(!loaded.quests) loaded.quests = { date: '', items: [] };
                 if(typeof loaded.streak === 'undefined') loaded.streak = 0;
                 appData = loaded;
             }
 
             document.getElementById('daily-quote').textContent = `"${QUOTES[Math.floor(Math.random() * QUOTES.length)]}"`;
+            checkDailyQuests();
             updateUI();
             renderCountdowns();
             renderBadges();
@@ -265,13 +287,47 @@
             renderBadges();
         }
 
+        // --- QUESTS LOGIC ---
+        function checkDailyQuests() {
+            const today = new Date().toISOString().split('T')[0];
+            if (appData.quests.date !== today) {
+                // Nuevo día: Resetear quests
+                appData.quests.date = today;
+                appData.quests.items = QUESTS_LIST.map(q => ({ ...q, done: false }));
+                save();
+            }
+        }
+
+        function toggleQuest(index) {
+            appData.quests.items[index].done = !appData.quests.items[index].done;
+            save();
+            if(appData.quests.items[index].done) {
+                // Pequeño feedback visual sin monedas
+                confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 }, colors: ['#10b981'] });
+            }
+        }
+
+        function renderQuests() {
+            const container = document.getElementById('quests-container');
+            container.innerHTML = '';
+            appData.quests.items.forEach((q, index) => {
+                const checked = q.done ? 'checked' : '';
+                container.innerHTML += `
+                    <label class="flex items-center gap-3 p-2 cursor-pointer transition-all hover:bg-slate-50 rounded-lg">
+                        <input type="checkbox" class="quest-checkbox w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all" ${checked} onchange="toggleQuest(${index})">
+                        <div class="font-bold text-slate-700 text-sm select-none transition-all">${q.text}</div>
+                    </label>
+                `;
+            });
+        }
+
         function checkStreak(todayStr) {
             if (!appData.lastStudy) return 1;
             const last = new Date(appData.lastStudy);
             const today = new Date(todayStr);
             const diffDays = Math.ceil(Math.abs(today - last) / (1000 * 60 * 60 * 24)); 
             if (diffDays === 0) return appData.streak; 
-            if (diffDays <= 3) return appData.streak + 1; // Margen descanso
+            if (diffDays <= 3) return appData.streak + 1; 
             return 1; 
         }
 
@@ -288,6 +344,7 @@
                 document.getElementById('study-done').classList.add('hidden');
             }
             renderRewards();
+            renderQuests();
         }
 
         function renderRewards() {
@@ -344,7 +401,6 @@
                 const isUnlocked = b.condition(appData) || appData.badges.includes(b.id);
                 const styleClass = isUnlocked ? 'badge-unlocked bg-white border-blue-100 shadow-sm' : 'badge-locked bg-slate-50 border-slate-100';
                 
-                // AÑADIDO: ONCLICK para ver info
                 container.innerHTML += `
                     <div onclick="showBadgeInfo('${b.id}')" class="flex-shrink-0 w-20 p-2 rounded-xl border flex flex-col items-center text-center ${styleClass} cursor-pointer btn-press">
                         <div class="text-2xl mb-1">${b.icon}</div>
@@ -402,10 +458,10 @@
         function redeem(id) {
             Swal.fire({
                 title: '¿Canjear?',
-                text: "Avisa a Javi de que has canjeado un premio.", // CAMBIO SOLICITADO
-                icon: 'warning',
+                text: "Avisa a Javi de que has canjeado un premio.", 
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Sí, avisar',
+                confirmButtonText: 'Canjear', 
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#0f172a'
             }).then((r) => {
@@ -434,7 +490,6 @@
 
         function resetApp() { if(confirm("¿Seguro?")) { localStorage.removeItem(DATA_KEY); location.reload(); } }
         function startBreathing() { Swal.fire({timer: 2000, showConfirmButton: false, title: 'Inhala...'}); }
-        function playAudio() { Swal.fire({timer: 1000, showConfirmButton: false, icon: 'success', title: 'Reproduciendo'}); }
 
         init();
     </script>
