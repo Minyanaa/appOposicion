@@ -32,9 +32,8 @@
         .page { display: none; opacity: 0; transform: translateY(5px); transition: opacity 0.2s ease, transform 0.2s ease; }
         .page.active { display: block; opacity: 1; transform: translateY(0); }
         .btn-press:active { transform: scale(0.96); transition: transform 0.1s; }
-        .locked-card { background-color: #f1f5f9; color: #94a3b8; border: 1px dashed #cbd5e1; }
         
-        /* Estilos específicos para Badges */
+        /* Badges Animations */
         .badge-locked { filter: grayscale(100%); opacity: 0.4; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
@@ -80,8 +79,7 @@
 
             <div class="mb-6">
                 <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Logros</h2>
-                <div id="badges-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                    </div>
+                <div id="badges-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
             </div>
 
             <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Acciones</h2>
@@ -111,22 +109,6 @@
             
             <div id="study-panel" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-8">
                 <div id="study-form">
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Energía Hoy</label>
-                    <div class="grid grid-cols-3 gap-2 mb-6">
-                        <button onclick="setEnergy('high')" class="energy-btn p-3 rounded-xl border border-slate-200 text-center hover:bg-green-50 focus:ring-2 ring-green-500" data-val="high">
-                            <div class="text-2xl">⚡</div>
-                            <div class="text-[10px] font-bold mt-1">A tope</div>
-                        </button>
-                        <button onclick="setEnergy('med')" class="energy-btn p-3 rounded-xl border border-slate-200 text-center hover:bg-blue-50 focus:ring-2 ring-blue-500" data-val="med">
-                            <div class="text-2xl">🔋</div>
-                            <div class="text-[10px] font-bold mt-1">Bien</div>
-                        </button>
-                        <button onclick="setEnergy('low')" class="energy-btn p-3 rounded-xl border border-slate-200 text-center hover:bg-orange-50 focus:ring-2 ring-orange-500" data-val="low">
-                            <div class="text-2xl">☕</div>
-                            <div class="text-[10px] font-bold mt-1">Low</div>
-                        </button>
-                    </div>
-
                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Materia (Opcional)</label>
                     <div class="relative mb-6">
                         <select id="subject-select" class="w-full p-4 bg-slate-50 rounded-xl border border-slate-200 appearance-none outline-none font-bold text-slate-700">
@@ -148,11 +130,11 @@
                 <div id="study-done" class="hidden text-center py-4">
                     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl animate-bounce">🛡️</div>
                     <h3 class="font-bold text-lg text-green-800">¡Registrado!</h3>
-                    <p id="done-msg" class="text-slate-500 text-sm mt-1">A descansar.</p>
+                    <p id="done-msg" class="text-slate-500 text-sm mt-1">Buen trabajo hoy.</p>
                 </div>
             </div>
 
-            <h3 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Distribución de Estudio</h3>
+            <h3 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Distribución</h3>
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative">
                 <canvas id="studyChart"></canvas>
                 <div id="no-data-msg" class="absolute inset-0 flex items-center justify-center bg-white/80 text-sm text-slate-400">
@@ -221,9 +203,8 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v8_pro'; 
+        const DATA_KEY = 'thac_app_v9_no_energy'; 
         
-        // Configuración
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
             { name: "2º Ejercicio", date: "2026-05-24", color: "indigo" },
@@ -233,9 +214,9 @@
         const BADGES = [
             { id: 'first_step', icon: '🐣', title: 'Primer paso', desc: 'Fichar 1 día', condition: (d) => d.coins >= 1 },
             { id: 'week_warrior', icon: '⚔️', title: 'Semana a tope', desc: 'Fichar 5 días', condition: (d) => d.coins >= 5 },
-            { id: 'night_owl', icon: '🦉', title: 'Búho', desc: 'Estudiar post 22h', condition: (d) => d.badges.includes('night_owl') }, // Manual trigger
             { id: 'weekend', icon: '🏖️', title: 'Finde', desc: 'Estudiar en Sábado', condition: (d) => d.badges.includes('weekend') },
-            { id: 'pro', icon: '👩‍⚖️', title: 'Experta', desc: '20 días totales', condition: (d) => d.coins >= 20 }
+            { id: 'pro', icon: '👩‍⚖️', title: 'Experta', desc: '20 días totales', condition: (d) => d.coins >= 20 },
+            { id: 'master', icon: '👑', title: 'Inspectora', desc: '50 días totales', condition: (d) => d.coins >= 50 }
         ];
 
         const QUOTES = [
@@ -253,10 +234,9 @@
             streak: 0,
             wallet: initialRewards(),
             badges: [],
-            history: [] // { date: 'YYYY-MM-DD', subject: 'X', mood: 'high' }
+            history: [] 
         };
 
-        let selectedEnergy = 'med';
         let studyChartInstance = null;
 
         function initialRewards() {
@@ -273,7 +253,6 @@
             const stored = localStorage.getItem(DATA_KEY);
             if(stored) {
                 let loaded = JSON.parse(stored);
-                // Migración segura
                 if(!loaded.wallet) loaded.wallet = initialRewards();
                 if(!loaded.history) loaded.history = [];
                 if(!loaded.badges) loaded.badges = [];
@@ -281,16 +260,11 @@
                 appData = loaded;
             }
 
-            // Frase del día aleatoria
             document.getElementById('daily-quote').textContent = `"${QUOTES[Math.floor(Math.random() * QUOTES.length)]}"`;
-
             updateUI();
             renderCountdowns();
             renderBadges();
             updateChart();
-            
-            // Seleccionar energía por defecto
-            setEnergy('med');
         }
 
         function save() {
@@ -299,36 +273,24 @@
             renderBadges();
         }
 
-        // --- LÓGICA RACHAS INTELIGENTE ---
         function checkStreak(todayStr) {
-            if (!appData.lastStudy) return 1; // Primer día
-
+            if (!appData.lastStudy) return 1;
             const last = new Date(appData.lastStudy);
             const today = new Date(todayStr);
-            
-            // Diferencia en días
             const diffTime = Math.abs(today - last);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
 
-            if (diffDays === 0) return appData.streak; // Mismo día
-            if (diffDays === 1) return appData.streak + 1; // Día siguiente
+            if (diffDays === 0) return appData.streak; 
+            if (diffDays === 1) return appData.streak + 1; 
+            if (diffDays <= 3) return appData.streak + 1; // Margen descanso
 
-            // Si hay hueco, chequeamos si fue fin de semana
-            // Si el hueco es <= 3 días (ej: Viernes -> Lunes son 3 días de gap real visual)
-            if (diffDays <= 3) {
-                // Chequear si el intervalo incluye Sábado (6) o Domingo (0)
-                // Simplificación: Asumimos que si el hueco es pequeño, es el descanso permitido.
-                return appData.streak + 1;
-            }
-
-            return 1; // Se rompió la racha
+            return 1; 
         }
 
         function updateUI() {
             document.getElementById('coin-display').textContent = appData.coins;
             document.getElementById('streak-display').textContent = appData.streak;
 
-            // Study UI State
             const today = new Date().toISOString().split('T')[0];
             const hasStudied = appData.lastStudy === today;
             
@@ -340,7 +302,7 @@
                 document.getElementById('study-done').classList.add('hidden');
             }
 
-            // Rewards List
+            // Rewards
             const rList = document.getElementById('rewards-list');
             rList.innerHTML = '';
             appData.wallet.forEach(item => {
@@ -370,53 +332,32 @@
             });
         }
 
-        // --- LÓGICA ESTUDIO ---
-        function setEnergy(val) {
-            selectedEnergy = val;
-            document.querySelectorAll('.energy-btn').forEach(b => {
-                b.classList.remove('bg-slate-100', 'ring-2', 'ring-slate-400', 'bg-green-50', 'ring-green-500', 'bg-blue-50', 'ring-blue-500', 'bg-orange-50', 'ring-orange-500');
-                if(b.dataset.val === val) {
-                    const color = val === 'high' ? 'green' : (val === 'med' ? 'blue' : 'orange');
-                    b.classList.add(`bg-${color}-50`, `ring-${color}-500`, 'ring-2');
-                }
-            });
-        }
-
         function confirmStudy() {
             const todayStr = new Date().toISOString().split('T')[0];
             const subject = document.getElementById('subject-select').value;
             
-            // 1. Calcular Racha
             appData.streak = checkStreak(todayStr);
-            
-            // 2. Guardar Datos Básicos
             appData.coins++;
             appData.lastStudy = todayStr;
-            
-            // 3. Guardar Historial para Gráfica
-            appData.history.push({ date: todayStr, subject: subject, mood: selectedEnergy });
+            appData.history.push({ date: todayStr, subject: subject });
 
-            // 4. Chequear Logros Especiales
-            const hour = new Date().getHours();
-            if (hour >= 22) checkBadgeTrigger('night_owl');
+            // Badge Triggers
             const day = new Date().getDay();
-            if (day === 6) checkBadgeTrigger('weekend');
+            if (day === 6) { if(!appData.badges.includes('weekend')) appData.badges.push('weekend'); }
 
-            // 5. Feedback Visual
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             
-            // Mensaje según energía
-            const msgMap = {
-                'high': '¡Hoy has arrasado! Sigue así.',
-                'med': 'Ladrillo a ladrillo se construye el castillo.',
-                'low': 'Lo importante es que has cumplido. Descansa.'
-            };
-            document.getElementById('done-msg').textContent = msgMap[selectedEnergy];
+            // Random message
+            const msgs = ["¡Enorme!", "Un día más cerca.", "Constancia pura.", "A descansar, te lo mereces."];
+            document.getElementById('done-msg').textContent = msgs[Math.floor(Math.random() * msgs.length)];
 
             save();
-            updateChart(); // Actualizar gráfico al momento
-            
-            // Chequear desbloqueo de premios
+            updateChart();
+            checkUnlocks();
+        }
+
+        // --- CHECKS UNLOCKS ---
+        function checkUnlocks() {
             const unlocked = appData.wallet.find(i => i.cost === appData.coins);
             if(unlocked) {
                 setTimeout(() => {
@@ -430,7 +371,7 @@
             }
         }
 
-        // --- GRÁFICOS (CHART.JS) ---
+        // --- GRAPHICS ---
         function updateChart() {
             const ctx = document.getElementById('studyChart');
             if(appData.history.length === 0) {
@@ -439,11 +380,8 @@
             }
             document.getElementById('no-data-msg').style.display = 'none';
 
-            // Agregar datos
             const counts = {};
-            appData.history.forEach(h => {
-                counts[h.subject] = (counts[h.subject] || 0) + 1;
-            });
+            appData.history.forEach(h => { counts[h.subject] = (counts[h.subject] || 0) + 1; });
 
             const data = {
                 labels: Object.keys(counts),
@@ -470,37 +408,20 @@
             }
         }
 
-        // --- BADGES ---
-        function checkBadgeTrigger(id) {
-            if(!appData.badges.includes(id)) {
-                appData.badges.push(id);
-                // No guardamos save() aquí para evitar recursión, se guarda en flow principal
-            }
-        }
-
         function renderBadges() {
             const container = document.getElementById('badges-container');
             container.innerHTML = '';
-            
             BADGES.forEach(b => {
                 const isUnlocked = b.condition(appData);
-                // Si la condición se cumple pero no está en el array guardado, lo añadimos (retroactivo)
-                if(isUnlocked && !appData.badges.includes(b.id)) {
-                     // Solo visual, ya que se guardará en next save
-                }
-
                 const styleClass = isUnlocked ? 'badge-unlocked bg-white border-blue-100 shadow-sm' : 'badge-locked bg-slate-50 border-slate-100';
-                
                 container.innerHTML += `
                     <div class="flex-shrink-0 w-20 p-2 rounded-xl border flex flex-col items-center text-center ${styleClass}">
                         <div class="text-2xl mb-1">${b.icon}</div>
                         <div class="text-[10px] font-bold text-slate-700 leading-tight">${b.title}</div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
-        // --- HELPERS ---
         function renderCountdowns() {
             const container = document.getElementById('countdown-container');
             container.innerHTML = '';
@@ -516,6 +437,25 @@
                     </div>`;
             });
         }
+
+        // --- MODO DIOS: SIMULACIÓN ---
+        function simulateDays(days) {
+            appData.coins += days;
+            appData.streak += days; 
+            // Añadimos historial fake para que el gráfico no se rompa
+            for(let i=0; i<days; i++) {
+                appData.history.push({date: 'simulated', subject: 'Simulacro'});
+            }
+            save();
+            Swal.close();
+            checkUnlocks();
+            updateChart();
+            
+            const toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 2000});
+            toast.fire({icon: 'success', title: `+${days} Días simulados`});
+        }
+
+        // NAVIGATION & UTILS
         function redeem(id) {
             Swal.fire({ title: '¿Canjear?', text: "Captura pantalla.", icon: 'warning', showCancelButton: true, confirmButtonText: 'Sí' }).then((r) => {
                 if (r.isConfirmed) {
@@ -531,17 +471,23 @@
             const btn = document.querySelector(`.nav-btn[data-target="${page}"]`);
             if(btn) { btn.classList.remove('text-slate-400'); btn.classList.add('text-blue-600'); }
         }
+        
+        // MENÚ DE AJUSTES CON EL BOTÓN DE SIMULACIÓN
         function openSettings() {
             Swal.fire({
                 title: 'Ajustes',
-                html: `<div class="grid gap-2"><button onclick="resetApp()" class="bg-red-50 text-red-600 p-3 rounded font-bold">⚠️ Resetear Todo</button></div>`,
-                showConfirmButton: false
+                html: `
+                    <div class="grid gap-3">
+                        <button onclick="simulateDays(5)" class="bg-yellow-100 text-yellow-800 p-4 rounded-xl font-bold border border-yellow-200 hover:bg-yellow-200 transition">🧪 Avanzar 5 Días (Test)</button>
+                        <button onclick="resetApp()" class="bg-red-50 text-red-600 p-4 rounded-xl font-bold border border-red-200 hover:bg-red-100 transition">⚠️ Resetear Todo</button>
+                    </div>
+                `,
+                showConfirmButton: false, showCloseButton: true
             });
         }
+        
         function resetApp() { if(confirm("¿Seguro?")) { localStorage.removeItem(DATA_KEY); location.reload(); } }
-        function startBreathing() { /* Lógica Zen igual a v7 */ 
-            Swal.fire({timer: 2000, showConfirmButton: false, title: 'Inhala...'}); 
-        }
+        function startBreathing() { Swal.fire({timer: 2000, showConfirmButton: false, title: 'Inhala...'}); }
         function playAudio() { Swal.fire({timer: 1000, showConfirmButton: false, icon: 'success', title: 'Reproduciendo'}); }
 
         init();
