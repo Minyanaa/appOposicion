@@ -81,8 +81,11 @@
             </div>
 
             <div class="mb-6">
-                <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Misiones de Bienestar</h2>
-                <div id="quests-container" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
+                <button onclick="toggleQuests()" class="w-full flex justify-between items-center text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70 focus:outline-none">
+                    <span>Misiones de Bienestar</span>
+                    <span id="quests-arrow" class="transition-transform duration-200">▼</span>
+                </button>
+                <div id="quests-container" class="hidden bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3 transition-all">
                     </div>
             </div>
 
@@ -203,7 +206,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v12_quests'; 
+        const DATA_KEY = 'thac_app_v13_quests_dropdown'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -219,10 +222,11 @@
             { id: 'master', icon: '👑', title: 'Inspectora', desc: 'Leyenda: 50 días de estudio', condition: (d) => d.coins >= 50 }
         ];
 
+        // MISIONES EDITADAS
         const QUESTS_LIST = [
             { id: 'sun', text: '☀️ Tomar 10 min el sol' },
             { id: 'walk', text: '🚶‍♀️ Dar un paseo' },
-            { id: 'gym', text: '💪 Gym / Moverse' },
+            { id: 'gym', text: '💪 Gym / Pilates' }, // CAMBIADO AQUÍ
             { id: 'water', text: '💧 Beber agua' },
             { id: 'series', text: '📺 Cap. de Serie' },
             { id: 'photo', text: '📸 Selfie a Javi' }
@@ -291,10 +295,20 @@
         function checkDailyQuests() {
             const today = new Date().toISOString().split('T')[0];
             if (appData.quests.date !== today) {
-                // Nuevo día: Resetear quests
                 appData.quests.date = today;
                 appData.quests.items = QUESTS_LIST.map(q => ({ ...q, done: false }));
                 save();
+            }
+        }
+        
+        function toggleQuests() {
+            const container = document.getElementById('quests-container');
+            const arrow = document.getElementById('quests-arrow');
+            container.classList.toggle('hidden');
+            if(container.classList.contains('hidden')) {
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                arrow.style.transform = 'rotate(180deg)';
             }
         }
 
@@ -302,7 +316,6 @@
             appData.quests.items[index].done = !appData.quests.items[index].done;
             save();
             if(appData.quests.items[index].done) {
-                // Pequeño feedback visual sin monedas
                 confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 }, colors: ['#10b981'] });
             }
         }
