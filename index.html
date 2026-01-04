@@ -29,12 +29,9 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .btn-press:active { transform: scale(0.95); transition: transform 0.1s; }
         
-        /* Barra de progreso circular para fechas */
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.35s;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
+        /* Estilos para estado bloqueado/desbloqueado */
+        .locked-card { background-color: #f1f5f9; color: #94a3b8; border: 1px dashed #cbd5e1; }
+        .unlocked-card { background-color: white; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
     </style>
 </head>
 <body class="bg-thac-bg text-slate-800 h-screen flex flex-col overflow-hidden selection:bg-blue-200">
@@ -45,7 +42,7 @@
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900">Hola, Opositora 👋</h1>
-                    <p id="date-display" class="text-slate-500 text-sm font-medium">Cargando fecha...</p>
+                    <p id="date-display" class="text-slate-500 text-sm font-medium">Cargando...</p>
                 </div>
                 <button onclick="openSettings()" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200 text-slate-400 hover:text-blue-600 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -54,7 +51,7 @@
 
             <div class="relative bg-slate-900 rounded-3xl p-6 text-white shadow-xl shadow-slate-200 mb-8 overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 00-.566-.241l-1.427-.357a1.017 1.017 0 00-.592.056l-3.375 1.688a1 1 0 01-1.378-.492l-1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L8 4.323V3a1 1 0 011-1zm-5 8.274l-.818 2.552a1 1 0 01-.138.293 2.016 2.016 0 01-1.015.683c.516.386 1.15.598 1.812.598a2.982 2.982 0 002.322-1.122 2.983 2.983 0 00.187-.215l-2.35-4.79z" clip-rule="evenodd"></path></svg></div>
-                <p class="text-xs font-bold tracking-[0.2em] text-slate-400 mb-2 uppercase">Nivel Actual</p>
+                <p class="text-xs font-bold tracking-[0.2em] text-slate-400 mb-2 uppercase">Progreso Acumulado</p>
                 <div class="flex items-baseline gap-2 mb-4">
                     <span id="coin-display" class="text-6xl font-black tracking-tighter">0</span>
                     <span class="text-lg font-medium text-slate-400">Días</span>
@@ -64,18 +61,18 @@
                 </span>
             </div>
 
-            <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Acciones</h2>
+            <h2 class="text-lg font-bold text-slate-800 mb-4 px-1">Menú</h2>
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="navTo('study')" class="col-span-2 bg-blue-600 text-white p-6 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press">
                     <div class="text-left">
-                        <div class="text-blue-200 text-xs font-bold uppercase mb-1">Registro</div>
-                        <div class="text-xl font-bold">Fichar Estudio</div>
+                        <div class="text-blue-200 text-xs font-bold uppercase mb-1">Tu objetivo hoy</div>
+                        <div class="text-xl font-bold">Fichar Estudio 📝</div>
                     </div>
                     <div class="bg-white/20 p-2 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
                 </button>
                 
-                <button onclick="navTo('wallet')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-2 btn-press h-32">
-                    <span class="text-3xl">🎁</span>
+                <button onclick="navTo('rewards')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-2 btn-press h-32">
+                    <span class="text-3xl">🏆</span>
                     <span class="font-bold text-slate-700 text-sm">Premios</span>
                 </button>
                 <button onclick="navTo('relax')" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-2 btn-press h-32">
@@ -87,26 +84,32 @@
 
         <div id="page-dates" class="page">
             <h2 class="text-2xl font-bold text-slate-900 mb-2">Hitos 2026</h2>
-            <p class="text-slate-500 mb-6">La meta está cada día más cerca.</p>
-            
-            <div id="countdown-container" class="space-y-4">
-                </div>
+            <p class="text-slate-500 mb-6">Cuenta atrás oficial.</p>
+            <div id="countdown-container" class="space-y-4"></div>
         </div>
 
         <div id="page-study" class="page">
             <h2 class="text-2xl font-bold text-slate-900 mb-2">Fichar Día</h2>
-            <div id="study-card" class="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-100 mt-4">
-                </div>
+            <div id="study-card" class="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-100 mt-4"></div>
         </div>
 
-        <div id="page-wallet" class="page">
-            <h2 class="text-2xl font-bold text-slate-900 mb-6">Tus Recompensas</h2>
-            <div id="wallet-list" class="space-y-4"></div>
+        <div id="page-rewards" class="page">
+            <div class="flex justify-between items-end mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Premios</h2>
+                    <p class="text-slate-500 text-sm">Desbloquea recompensas estudiando.</p>
+                </div>
+                <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">
+                    <span id="rewards-coins-display">0</span> Días
+                </div>
+            </div>
+            
+            <div id="rewards-list" class="space-y-4 pb-12">
+                </div>
         </div>
 
         <div id="page-relax" class="page">
             <h2 class="text-2xl font-bold text-slate-900 mb-4">Zona Zen</h2>
-            
             <div class="bg-blue-50 rounded-2xl p-6 border border-blue-100 text-center mb-6">
                 <h3 class="font-bold text-blue-900 mb-4">Respiración 4-4-8</h3>
                 <div id="breath-circle" class="w-32 h-32 rounded-full border-4 border-blue-200 mx-auto flex items-center justify-center mb-4 transition-all duration-1000">
@@ -114,7 +117,6 @@
                 </div>
                 <button onclick="startBreathing()" class="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-bold btn-press">Iniciar</button>
             </div>
-
             <div class="bg-white rounded-2xl p-6 border border-slate-100">
                 <h3 class="font-bold text-slate-700 mb-4">Audios</h3>
                 <select id="audio-select" class="w-full p-3 bg-slate-50 rounded-lg mb-3 border border-slate-200">
@@ -142,9 +144,9 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
             </div>
         </button>
-        <button onclick="navTo('wallet')" class="nav-btn w-1/5 flex flex-col items-center gap-1 text-slate-400" data-target="wallet">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span class="text-[10px] font-bold">Cartera</span>
+        <button onclick="navTo('rewards')" class="nav-btn w-1/5 flex flex-col items-center gap-1 text-slate-400" data-target="rewards">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+            <span class="text-[10px] font-bold">Premios</span>
         </button>
         <button onclick="navTo('relax')" class="nav-btn w-1/5 flex flex-col items-center gap-1 text-slate-400" data-target="relax">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -153,29 +155,35 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v2';
-        // FECHAS OBJETIVO
+        const DATA_KEY = 'thac_app_v3_rewards'; // Cambiamos la key para evitar conflictos con versiones viejas
+        
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
             { name: "2º Ejercicio", date: "2026-05-24", color: "indigo" },
             { name: "3er Ejercicio", date: "2026-07-05", color: "emerald" }
         ];
 
-        let appData = { coins: 0, lastStudy: '', wallet: initialWallet() };
+        let appData = { coins: 0, lastStudy: '', wallet: initialRewards() };
 
-        function initialWallet() {
+        // CONFIGURACIÓN DE PREMIOS (COSTE EN DÍAS)
+        function initialRewards() {
             return [
-                {id: 1, title: "Cena Gourmet", active: true},
-                {id: 2, title: "Masaje Espalda", active: true},
-                {id: 3, title: "Cine VIP", active: true},
-                {id: 4, title: "Escapada", active: true},
-                {id: 5, title: "Vale Comodín", active: true}
+                {id: 1, title: "Cine VIP + Palomitas", cost: 5, active: true},
+                {id: 2, title: "Vale Comodín", cost: 10, active: true},
+                {id: 3, title: "Cena Gourmet", cost: 15, active: true},
+                {id: 4, title: "Masaje Espalda", cost: 25, active: true},
+                {id: 5, title: "Escapada Fin de Semana", cost: 50, active: true}
             ];
         }
 
         function init() {
             const stored = localStorage.getItem(DATA_KEY);
-            if(stored) appData = JSON.parse(stored);
+            if(stored) {
+                // Fusión segura por si cambiamos premios en código
+                let loaded = JSON.parse(stored);
+                if(!loaded.wallet || loaded.wallet.length === 0) loaded.wallet = initialRewards();
+                appData = loaded;
+            }
             
             const opts = { weekday: 'long', day: 'numeric', month: 'long' };
             document.getElementById('date-display').textContent = new Date().toLocaleDateString('es-ES', opts);
@@ -190,8 +198,12 @@
         }
 
         function updateUI() {
+            // Home Counters
             document.getElementById('coin-display').textContent = appData.coins;
             
+            // Rewards Page Counter
+            document.getElementById('rewards-coins-display').textContent = appData.coins;
+
             // Rango
             let rank = "Novata";
             if(appData.coins >= 5) rank = "Constante";
@@ -218,18 +230,53 @@
                 `;
             }
 
-            // Wallet UI
-            const wList = document.getElementById('wallet-list');
-            wList.innerHTML = '';
+            // --- LÓGICA DE PREMIOS (PROGRESIÓN) ---
+            const rList = document.getElementById('rewards-list');
+            rList.innerHTML = '';
+            
             appData.wallet.forEach(item => {
-                const isUsed = !item.active;
-                wList.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl border ${isUsed ? 'border-slate-100 bg-slate-50' : 'border-slate-100 shadow-sm'} flex justify-between items-center">
-                        <div class="${isUsed ? 'opacity-50' : ''}">
-                            <div class="font-bold text-slate-800 ${isUsed ? 'line-through' : ''}">${item.title}</div>
-                            <div class="text-[10px] font-bold tracking-wider ${isUsed ? 'text-slate-400' : 'text-green-500'}">${isUsed ? 'USADO' : 'DISPONIBLE'}</div>
+                const isSpent = !item.active;
+                const isLocked = appData.coins < item.cost;
+                const progress = Math.min(100, (appData.coins / item.cost) * 100);
+                
+                let cardClass = "";
+                let buttonHTML = "";
+                let statusHTML = "";
+
+                if (isSpent) {
+                    // ESTADO: GASTADO
+                    cardClass = "bg-slate-50 border border-slate-200 opacity-60";
+                    statusHTML = `<span class="text-xs font-bold text-slate-400 line-through">DISFRUTADO</span>`;
+                    buttonHTML = `<span class="text-2xl">✅</span>`;
+                } else if (isLocked) {
+                    // ESTADO: BLOQUEADO
+                    cardClass = "bg-slate-50 border border-dashed border-slate-300 relative overflow-hidden";
+                    statusHTML = `<div class="flex items-center gap-2 text-xs font-bold text-slate-400">
+                                    <span>🔒 Se desbloquea a los ${item.cost} días</span>
+                                  </div>`;
+                    // Barra de progreso sutil
+                    buttonHTML = `
+                        <div class="w-10 h-10 rounded-full border-2 border-slate-200 flex items-center justify-center text-xs font-bold text-slate-400">
+                            ${Math.floor(progress)}%
                         </div>
-                        ${!isUsed ? `<button onclick="redeem(${item.id})" class="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold btn-press">Usar</button>` : ''}
+                    `;
+                } else {
+                    // ESTADO: DISPONIBLE
+                    cardClass = "bg-white border border-blue-100 shadow-sm ring-1 ring-blue-50";
+                    statusHTML = `<span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">¡DISPONIBLE!</span>`;
+                    buttonHTML = `<button onclick="redeem(${item.id})" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold btn-press shadow-lg shadow-slate-200">Canjear</button>`;
+                }
+
+                rList.innerHTML += `
+                    <div class="p-5 rounded-2xl flex justify-between items-center ${cardClass}">
+                        ${isLocked ? `<div class="absolute bottom-0 left-0 h-1 bg-blue-200/50" style="width:${progress}%"></div>` : ''}
+                        <div>
+                            <div class="font-bold text-slate-800 text-lg ${isSpent ? 'line-through decoration-slate-400' : ''}">${item.title}</div>
+                            <div class="mt-1">${statusHTML}</div>
+                        </div>
+                        <div class="ml-4">
+                            ${buttonHTML}
+                        </div>
                     </div>
                 `;
             });
@@ -239,23 +286,13 @@
         function renderCountdowns() {
             const container = document.getElementById('countdown-container');
             container.innerHTML = '';
-            
             const today = new Date();
-            
             EXAMS.forEach(exam => {
                 const examDate = new Date(exam.date);
                 const diff = examDate - today;
                 const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                
-                // Color mapping
-                const colors = {
-                    blue: "bg-blue-50 text-blue-700 border-blue-100",
-                    indigo: "bg-indigo-50 text-indigo-700 border-indigo-100",
-                    emerald: "bg-emerald-50 text-emerald-700 border-emerald-100"
-                };
-                
+                const colors = { blue: "bg-blue-50 text-blue-700 border-blue-100", indigo: "bg-indigo-50 text-indigo-700 border-indigo-100", emerald: "bg-emerald-50 text-emerald-700 border-emerald-100" };
                 const style = colors[exam.color];
-
                 container.innerHTML += `
                     <div class="p-5 rounded-2xl border ${style} flex justify-between items-center">
                         <div>
@@ -277,26 +314,29 @@
             appData.coins++;
             appData.lastStudy = new Date().toISOString().split('T')[0];
             
-            // Check Bonus (Cada 5 días)
-            if(appData.coins % 5 === 0) {
-                Swal.fire({
-                    title: '¡BONUS!',
-                    text: `Has llegado a ${appData.coins} días. ¡Tienes una recompensa especial!`,
-                    icon: 'success',
-                    confirmButtonText: 'Genial'
-                });
+            // Check Bonus Unlock
+            const unlocked = appData.wallet.find(i => i.cost === appData.coins);
+            if(unlocked) {
+                setTimeout(() => {
+                    Swal.fire({
+                        title: '¡NUEVO PREMIO!',
+                        text: `Has desbloqueado: ${unlocked.title}`,
+                        icon: 'success',
+                        confirmButtonText: 'Ver Premios'
+                    }).then((r) => { if(r.isConfirmed) navTo('rewards'); });
+                }, 1000);
             }
             save();
         }
 
         function redeem(id) {
             Swal.fire({
-                title: '¿Canjear vale?',
-                text: "No podrás deshacer esta acción.",
+                title: '¿Canjear premio?',
+                text: "Solo puedes disfrutarlo una vez.",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Sí, disfrutar',
-                cancelButtonText: 'Cancelar'
+                confirmButtonText: '¡Sí, lo quiero!',
+                cancelButtonText: 'Esperar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     const item = appData.wallet.find(i => i.id === id);
@@ -304,7 +344,7 @@
                         item.active = false;
                         save();
                         confetti();
-                        Swal.fire('¡Disfrutado!', 'Has canjeado tu regalo.', 'success');
+                        Swal.fire('¡Disfrutado!', 'Recuerda avisar a tu novio para canjearlo 😉', 'success');
                     }
                 }
             });
@@ -313,7 +353,6 @@
         function navTo(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-'+page).classList.add('active');
-            
             document.querySelectorAll('.nav-btn').forEach(b => {
                 b.classList.remove('text-blue-600');
                 b.classList.add('text-slate-400');
@@ -322,68 +361,57 @@
             document.querySelector(`.nav-btn[data-target="${page}"]`).classList.remove('text-slate-400');
         }
 
-        // --- SETTINGS & ADMIN ---
+        // --- SETTINGS ---
         function openSettings() {
             Swal.fire({
                 title: 'Configuración',
                 html: `
                     <div class="grid gap-3">
-                        <button onclick="testReward()" class="bg-yellow-100 text-yellow-800 p-3 rounded-lg font-bold text-sm border border-yellow-200">🧪 Simular 5 Días (+Bonus)</button>
-                        <button onclick="resetApp()" class="bg-red-100 text-red-800 p-3 rounded-lg font-bold text-sm border border-red-200">⚠️ Borrar Datos (Reset)</button>
+                        <button onclick="testReward()" class="bg-yellow-100 text-yellow-800 p-3 rounded-lg font-bold text-sm border border-yellow-200">🧪 +5 Días (Test)</button>
+                        <button onclick="resetApp()" class="bg-red-100 text-red-800 p-3 rounded-lg font-bold text-sm border border-red-200">⚠️ Resetear App</button>
                     </div>
                 `,
-                showConfirmButton: false,
-                showCloseButton: true
+                showConfirmButton: false, showCloseButton: true
             });
         }
-
         function testReward() {
-            appData.coins += 5; // Sumamos 5 de golpe
+            appData.coins += 5;
             save();
             Swal.close();
-            // Disparar la alerta de bonus manualmente para probar
-            setTimeout(() => {
-                confetti();
-                Swal.fire('¡PRUEBA DE BONUS!', `Has alcanzado ${appData.coins} días. (Simulación)`, 'success');
-            }, 500);
+            const unlocked = appData.wallet.find(i => i.cost === appData.coins);
+            if(unlocked) {
+                Swal.fire('¡Simulación!', `Has llegado a ${appData.coins} días. Se desbloquea: ${unlocked.title}`, 'info');
+            } else {
+                Swal.fire('¡Simulación!', `Días: ${appData.coins}`, 'success');
+            }
         }
-
         function resetApp() {
-            if(confirm("¿Seguro? Se borrará todo el progreso.")) {
+            if(confirm("¿Borrar todo?")) {
                 localStorage.removeItem(DATA_KEY);
                 location.reload();
             }
         }
         
-        // --- BREATHING & AUDIO ---
+        // --- RELAX ---
         function startBreathing() {
             const circle = document.getElementById('breath-circle');
             const text = document.getElementById('breath-text');
-            
             text.innerText = "Inhala (4)";
             circle.classList.add('scale-125', 'border-blue-500');
-            
             setTimeout(() => {
                 text.innerText = "Mantén (4)";
-                circle.classList.remove('border-blue-500');
-                circle.classList.add('border-yellow-400');
-                
+                circle.classList.remove('border-blue-500'); circle.classList.add('border-yellow-400');
                 setTimeout(() => {
                     text.innerText = "Exhala (8)";
-                    circle.classList.remove('scale-125', 'border-yellow-400');
-                    circle.classList.add('scale-90', 'border-green-500');
-                    
+                    circle.classList.remove('scale-125', 'border-yellow-400'); circle.classList.add('scale-90', 'border-green-500');
                     setTimeout(() => {
-                        text.innerText = "Listo";
-                        circle.classList.remove('scale-90', 'border-green-500');
+                        text.innerText = "Listo"; circle.classList.remove('scale-90', 'border-green-500');
                     }, 8000);
                 }, 4000);
             }, 4000);
         }
-        
         function playAudio() {
              const val = document.getElementById('audio-select').value;
-             // Audio logic here
              Swal.fire({title: 'Reproduciendo...', text: `Archivo: ${val}.mp3`, timer: 2000, showConfirmButton: false});
         }
 
