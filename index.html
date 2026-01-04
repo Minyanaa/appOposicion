@@ -44,24 +44,26 @@
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* BONSÁI ANIMADO (DINÁMICO) */
-        .tree-anim { 
-            transform-origin: 150px 200px; /* Pivote en la base del tronco */
-            /* Duración reducida a 4s y ángulo aumentado para más dinamismo */
-            animation: treeSway 4s ease-in-out infinite alternate; 
+        /* BONSÁI ANIMADO (MOVIMIENTO DINÁMICO) */
+        .foliage-sway {
+            transform-origin: center 85%; 
+            transform-box: fill-box; 
+            /* Animación más rápida (3s) y con nombre nuevo */
+            animation: strongWind 3s ease-in-out infinite alternate;
         }
-        
+
         .flower-bloom { 
             transform-origin: center; 
             transform-box: fill-box;
             animation: bloomFlower 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
         }
         
-        @keyframes treeSway { 
-            0% { transform: rotate(-5deg); } /* Ángulo aumentado */
-            100% { transform: rotate(5deg); } /* Ángulo aumentado */
+        @keyframes strongWind {
+            /* Ángulo mayor (4deg) y desplazamiento lateral (3px) para efecto viento */
+            0% { transform: rotate(-4deg) translateX(-3px); }
+            100% { transform: rotate(4deg) translateX(3px); }
         }
-        
+
         @keyframes bloomFlower { 
             0% { transform: scale(0) rotate(-15deg); opacity: 0; } 
             100% { transform: scale(1) rotate(0deg); opacity: 1; } 
@@ -244,7 +246,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v24_final_dynamic'; 
+        const DATA_KEY = 'thac_app_v25_final_windy'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -334,7 +336,7 @@
             renderBonsai();
         }
 
-        // --- BONSÁI GENERATIVO (SAKURA SVG ANIMADO) ---
+        // --- BONSÁI GENERATIVO (SAKURA SVG ANIMADO & REDISEÑADO) ---
         function renderBonsai() {
             const c = appData.coins;
             const container = document.getElementById('bonsai-container');
@@ -361,20 +363,24 @@
                  svgContent += `<path d="M148 185 Q156 180 151 175 Q141 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
             }
 
-            if (c >= 5) { // FASE 2: Brote
+            if (c >= 5) { // FASE 2: Brote Fuerte (REDISEÑADA)
                 levelText.textContent = "Brote";
-                svgContent += `<g class="tree-anim">`; // Animación aplicada aquí
-                svgContent += `<path d="M150 200 C150 180 148 160 150 140" stroke="${trunkColor}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M150 160 Q135 150 130 140" stroke="${trunkColor}" stroke-width="2.5" stroke-linecap="round" fill="none"/>`;
-                // Hojas rediseñadas (nubes pequeñas)
-                svgContent +=drawCloud(145, 135, 12, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(125, 135, 10, leafColorLight, leafColorDark);
+                svgContent += `<g class="foliage-sway">`;
+                // Tronco más ancho y cónico
+                svgContent += `<path d="M150 200 C155 180 145 160 150 145" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
+                // Ramas laterales
+                svgContent += `<path d="M150 165 Q130 155 125 145" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
+                svgContent += `<path d="M150 155 Q170 150 175 140" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
+                // Copas de hojas compactas (estilo nube)
+                svgContent +=drawCloud(150, 140, 18, leafColorLight, leafColorDark); // Central
+                svgContent +=drawCloud(125, 145, 14, leafColorLight, leafColorDark); // Izq
+                svgContent +=drawCloud(175, 140, 14, leafColorLight, leafColorDark); // Der
                  svgContent += `</g>`;
             }
 
             if (c >= 10) { // FASE 3: Arbolito
                 levelText.textContent = "Arbolito";
-                svgContent += `<g class="tree-anim">`;
+                svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C155 170 140 150 145 120" stroke="${trunkColor}" stroke-width="7" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q170 140 175 125" stroke="${trunkColor}" stroke-width="3.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M142 130 Q120 120 115 110" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
@@ -386,7 +392,7 @@
 
             if (c >= 15) { // FASE 4: Creciendo
                 levelText.textContent = "Creciendo";
-                svgContent += `<g class="tree-anim">`;
+                svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C158 170 135 140 150 100" stroke="${trunkColor}" stroke-width="9" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M148 150 Q180 140 190 120" stroke="${trunkColor}" stroke-width="4.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M140 130 Q110 120 105 100" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
@@ -398,7 +404,7 @@
 
              if (c >= 20) { // FASE 5: Formado
                 levelText.textContent = "Formado";
-                svgContent += `<g class="tree-anim">`;
+                svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C165 170 125 140 155 90" stroke="${trunkColor}" stroke-width="11" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M150 160 Q195 150 205 125" stroke="${trunkColor}" stroke-width="5.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 135 Q95 125 90 105" stroke="${trunkColor}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
@@ -412,7 +418,7 @@
 
             if (c >= 25) { // FASE 6: Frondoso
                 levelText.textContent = "Frondoso";
-                svgContent += `<g class="tree-anim">`;
+                svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
@@ -427,7 +433,7 @@
 
              if (c >= 30) { // FASE 7: Capullos
                 levelText.textContent = "Capullos";
-                svgContent += `<g class="tree-anim">`;
+                svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
@@ -446,7 +452,7 @@
 
             if (c >= 35) { // FASE 8: Legendario (Sakura)
                 levelText.textContent = "Legendario";
-                svgContent += `<g class="tree-anim">`;
+                svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
