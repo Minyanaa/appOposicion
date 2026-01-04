@@ -33,11 +33,67 @@
         .page.active { display: block; opacity: 1; transform: translateY(0); }
         .btn-press:active { transform: scale(0.96); transition: transform 0.1s; }
         
-        /* Badges */
+        /* Checkbox & Badges */
+        .quest-checkbox:checked + div { text-decoration: line-through; color: #10b981; opacity: 0.7; }
         .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .quest-checkbox:checked + div { text-decoration: line-through; color: #10b981; opacity: 0.7; }
 
+        /* --- ESCENA OFICINA (CSS ART) --- */
+        .room-container {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            background: #f1f5f9;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            perspective: 500px;
+        }
+        /* Suelo */
+        .room-floor {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: #e2e8f0;
+            border-top: 1px solid #cbd5e1;
+        }
+        /* Mesa (Dibujada con CSS para solidez) */
+        .room-desk {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 10px;
+            background: #475569;
+            border-radius: 4px;
+            z-index: 20;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .room-desk::before { /* Patas */
+            content: ''; position: absolute; top: 10px; left: 10px; width: 5px; height: 60px; background: #334155;
+        }
+        .room-desk::after { /* Patas */
+            content: ''; position: absolute; top: 10px; right: 10px; width: 5px; height: 60px; background: #334155;
+        }
+
+        /* Objetos (Posicionamiento Absoluto Estricto) */
+        .obj { position: absolute; transition: all 0.5s; font-size: 2rem; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1)); }
+        
+        .obj-window { top: 20px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; opacity: 0.9; }
+        .obj-rug { bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 4.5rem; z-index: 1; opacity: 0.8; }
+        .obj-chair { bottom: 35px; left: 50%; transform: translateX(-50%); font-size: 3rem; z-index: 5; } /* Delante mesa */
+        .obj-laptop { bottom: 48px; left: 50%; transform: translateX(-50%); font-size: 1.8rem; z-index: 25; } /* Encima mesa */
+        .obj-plant { bottom: 30px; left: 20px; font-size: 3.5rem; z-index: 10; }
+        .obj-lamp { bottom: 48px; left: 35%; font-size: 2rem; z-index: 25; }
+        .obj-coffee { bottom: 48px; right: 35%; font-size: 1.2rem; z-index: 25; }
+        .obj-books { bottom: 0px; right: 10px; font-size: 2.5rem; z-index: 15; }
+        .obj-cat { bottom: 48px; right: 20%; font-size: 1.5rem; z-index: 25; } /* Sobre mesa */
+        .obj-frame { top: 40px; left: 20px; font-size: 2.5rem; }
+
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        
         /* ZONA ZEN */
         .breath-circle { transition: transform 4s ease-in-out, background-color 0.5s, border-color 0.5s; }
         .inhale { transform: scale(1.5); border-color: #3b82f6; background-color: #eff6ff; }
@@ -45,41 +101,6 @@
         .exhale { transform: scale(1.0); border-color: #10b981; background-color: #f0fdf4; transition-duration: 8s; }
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
-
-        /* OFICINA VIRTUAL (ARQUITECTURA) */
-        .office-scene {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            background-color: #f1f5f9; /* Pared */
-            border-radius: 1.5rem;
-            overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
-            border: 1px solid #cbd5e1;
-        }
-        .office-floor {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 60px;
-            background-color: #e2e8f0; /* Suelo */
-            border-top: 1px solid #cbd5e1;
-        }
-        .furniture { position: absolute; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
-        
-        /* Ubicaciones Fijas */
-        .pos-window { top: 20px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; opacity: 0.8; }
-        .pos-rug { bottom: 20px; left: 50%; transform: translateX(-50%) scaleX(2); font-size: 3rem; opacity: 0.9; z-index: 1; }
-        .pos-plant { bottom: 30px; left: 15px; font-size: 3rem; z-index: 2; }
-        .pos-desk { bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 4rem; z-index: 2; }
-        .pos-chair { bottom: 30px; right: 20px; font-size: 3rem; z-index: 2; transform: scaleX(-1); } /* Silla mirando a mesa */
-        .pos-laptop { bottom: 65px; left: 50%; transform: translateX(-50%); font-size: 1.8rem; z-index: 3; }
-        .pos-lamp { bottom: 65px; left: 38%; font-size: 2rem; z-index: 3; }
-        .pos-coffee { bottom: 65px; left: 62%; font-size: 1.2rem; z-index: 3; }
-        .pos-cat { bottom: 65px; left: 50%; transform: translateX(-50%) translateY(-25px); font-size: 2rem; z-index: 4; }
-        .pos-frame { top: 30px; right: 15%; font-size: 2.5rem; opacity: 0.9; }
-
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body class="bg-thac-bg text-slate-800 h-[100dvh] flex flex-col overflow-hidden selection:bg-blue-200">
@@ -111,19 +132,11 @@
                 </div>
             </div>
 
-            <div class="office-scene mb-6" id="office-container">
-                <div class="office-floor"></div>
-                </div>
+            <div class="room-container mb-6" id="office-container">
+                <div class="room-floor"></div>
+                <div class="room-desk"></div> </div>
 
-            <button onclick="navTo('study')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press mb-6 group">
-                <div class="text-left">
-                    <div class="text-blue-100 text-xs font-bold uppercase mb-1">Objetivo Diario</div>
-                    <div class="text-2xl font-bold">Fichar Estudio 📝</div>
-                </div>
-                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
-            </button>
-
-            <div class="mb-6">
+            <div class="mb-4">
                 <button onclick="toggleQuests()" class="w-full flex justify-between items-center text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70 focus:outline-none">
                     <span>Misiones de Bienestar</span>
                     <span id="quests-arrow" class="transition-transform duration-200">▼</span>
@@ -135,13 +148,20 @@
                 <h2 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Logros</h2>
                 <div id="badges-container" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
             </div>
+
+            <button onclick="navTo('study')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press group mt-4">
+                <div class="text-left">
+                    <div class="text-blue-100 text-xs font-bold uppercase mb-1">Objetivo Diario</div>
+                    <div class="text-2xl font-bold">Fichar Estudio 📝</div>
+                </div>
+                <div class="bg-white/20 p-3 rounded-full group-hover:scale-110 transition-transform"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div>
+            </button>
             
             <div class="h-10"></div>
         </div>
 
         <div id="page-study" class="page">
             <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Registro Diario</h2>
-            
             <div id="study-panel" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-8">
                 <div id="study-form">
                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Materia (Opcional)</label>
@@ -164,7 +184,6 @@
                     <p id="done-msg" class="text-slate-500 text-sm mt-1">Buen trabajo hoy.</p>
                 </div>
             </div>
-
             <h3 class="text-sm font-bold text-slate-800 mb-3 px-1 uppercase tracking-wide opacity-70">Distribución</h3>
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative">
                 <canvas id="studyChart"></canvas>
@@ -180,17 +199,16 @@
         </div>
 
         <div id="page-dates" class="page">
-            <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Futuro</h2>
-            
-            <div id="countdown-container" class="space-y-4 mb-8"></div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Nuestros Planes</h2>
             
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-slate-800 text-lg">🌟 Muro de los Porqués</h3>
-                <button onclick="addPlan()" class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs font-bold btn-press shadow-sm hover:bg-blue-200 transition">+ Nuevo Sueño</button>
+                <button onclick="addPlan()" class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs font-bold btn-press shadow-sm hover:bg-blue-200 transition">+ Nuevo</button>
             </div>
-            
-            <div id="plans-container" class="space-y-3">
-                </div>
+            <div id="plans-container" class="space-y-3 mb-8"></div>
+
+            <h3 class="font-bold text-slate-800 text-lg mb-4">⏳ Cuenta Atrás THAC</h3>
+            <div id="countdown-container" class="space-y-4"></div>
             
             <div class="h-10"></div>
         </div>
@@ -202,24 +220,17 @@
                 <button onclick="switchZen('bubbles')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-500" data-tab="bubbles">Burbujas</button>
                 <button onclick="switchZen('body')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-500" data-tab="body">Cuerpo</button>
             </div>
-
             <div id="zen-breath" class="zen-content">
                 <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100 text-center relative overflow-hidden">
                     <h3 class="font-bold text-blue-900 mb-6">Técnica 4-4-8</h3>
-                    <div id="breath-circle" class="breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative">
-                        <span id="breath-text" class="text-slate-400 font-bold text-xl">Start</span>
-                    </div>
+                    <div id="breath-circle" class="breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative"><span id="breath-text" class="text-slate-400 font-bold text-xl">Start</span></div>
                     <button id="btn-breath-toggle" onclick="toggleBreathing()" class="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-sm font-bold btn-press shadow-lg shadow-blue-200">Iniciar Respiración</button>
                 </div>
             </div>
-
             <div id="zen-bubbles" class="zen-content hidden">
-                <div class="bg-slate-200 rounded-2xl p-4 shadow-inner">
-                    <div id="bubble-grid" class="grid grid-cols-5 gap-3"></div>
-                </div>
+                <div class="bg-slate-200 rounded-2xl p-4 shadow-inner"><div id="bubble-grid" class="grid grid-cols-5 gap-3"></div></div>
                 <button onclick="resetBubbles()" class="w-full mt-4 bg-white text-slate-600 py-3 rounded-xl font-bold text-sm border border-slate-200 btn-press">🔄 Nueva lámina</button>
             </div>
-
             <div id="zen-body" class="zen-content hidden space-y-3">
                 <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🦒</div><div><div class="font-bold text-slate-800">Cuello</div><div class="text-xs text-slate-500">Gira suavemente a los lados (10s)</div></div></div>
                 <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm"><div class="text-3xl">🤷‍♀️</div><div><div class="font-bold text-slate-800">Hombros</div><div class="text-xs text-slate-500">Rotaciones hacia atrás (10 reps)</div></div></div>
@@ -232,14 +243,14 @@
 
     <nav class="fixed bottom-0 w-full bg-white border-t border-slate-200 pb-safe px-4 flex justify-between items-center z-50 h-[80px] shadow-[0_-5px_15px_rgba(0,0,0,0.02)]">
         <button onclick="navTo('home')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-blue-600 h-full" data-target="home"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg><span class="text-[10px] font-bold">Inicio</span></button>
-        <button onclick="navTo('dates')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="dates"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg><span class="text-[10px] font-bold">Futuro</span></button>
+        <button onclick="navTo('dates')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="dates"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg><span class="text-[10px] font-bold">Planes</span></button>
         <button onclick="navTo('study')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="study"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg><span class="text-[10px] font-bold">Fichar</span></button>
         <button onclick="navTo('rewards')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="rewards"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg><span class="text-[10px] font-bold">Premios</span></button>
         <button onclick="navTo('relax')" class="nav-btn w-1/5 flex flex-col items-center justify-center text-slate-400 h-full" data-target="relax"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-[10px] font-bold">Zen</span></button>
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v16_architect'; 
+        const DATA_KEY = 'thac_app_v17_cozy'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -306,13 +317,11 @@
                 let loaded = JSON.parse(stored);
                 if(!loaded.plans) loaded.plans = [];
                 if(!loaded.cookie) loaded.cookie = { date: '', msg: '' };
-                // Migraciones
                 if(!loaded.wallet || loaded.wallet.length < 8) loaded.wallet = initialRewards();
                 if(!loaded.quests) loaded.quests = { date: '', items: [] };
                 appData = loaded;
             }
 
-            // Quote fixed fallback (cookie system used primarily)
             checkDailyQuests();
             checkDailyCookie();
             updateUI();
@@ -331,57 +340,30 @@
             renderOffice();
         }
 
-        // --- OFFICE LOGIC (Fixed Layout) ---
+        // --- OFFICE LOGIC (SCENE) ---
         function renderOffice() {
             const room = document.getElementById('office-container');
-            // Mantener estructura base
-            let html = '<div class="office-floor"></div>';
+            let html = '<div class="room-floor"></div><div class="room-desk"></div>';
             const c = appData.coins;
             
-            // Objetos en posiciones CSS fijas
-            if(c >= 1) html += `<div class="furniture pos-rug">🧶</div>`;
-            if(c >= 5) html += `<div class="furniture pos-plant">🌿</div>`;
-            if(c >= 10) html += `<div class="furniture pos-desk">🪑</div>`;
-            if(c >= 15) html += `<div class="furniture pos-chair">🛋️</div>`;
-            if(c >= 20) html += `<div class="furniture pos-window">🪟</div>`;
-            if(c >= 25) html += `<div class="furniture pos-frame">🖼️</div>`;
-            if(c >= 30) html += `<div class="furniture pos-lamp">💡</div>`;
-            if(c >= 40) html += `<div class="furniture pos-laptop">💻</div>`;
-            if(c >= 50) html += `<div class="furniture pos-coffee">☕</div>`;
-            if(c >= 60) html += `<div class="furniture pos-cat">🐈</div>`;
+            // OBJETOS POSICIONADOS
+            if(c >= 1) html += `<div class="obj obj-rug">🧶</div>`;
+            if(c >= 5) html += `<div class="obj obj-plant">🌿</div>`;
+            if(c >= 10) html += `<div class="obj obj-chair">🛋️</div>`;
+            if(c >= 15) html += `<div class="obj obj-window">🪟</div>`;
+            if(c >= 20) html += `<div class="obj obj-laptop">💻</div>`;
+            if(c >= 25) html += `<div class="obj obj-lamp">💡</div>`;
+            if(c >= 30) html += `<div class="obj obj-coffee">☕</div>`;
+            if(c >= 40) html += `<div class="obj obj-books">📚</div>`;
+            if(c >= 50) html += `<div class="obj obj-cat">🐈</div>`;
+            if(c >= 60) html += `<div class="obj obj-frame">🖼️</div>`;
             
-            // Si está vacía
             if(c === 0) html += `<div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm font-bold opacity-50 pointer-events-none">Estudia para decorar tu despacho</div>`;
             
             room.innerHTML = html;
         }
 
-        // --- COOKIE LOGIC ---
-        function checkDailyCookie() {
-            const today = new Date().toISOString().split('T')[0];
-            const btn = document.getElementById('btn-cookie');
-            const txt = document.getElementById('fortune-text');
-            
-            if (appData.cookie.date === today) {
-                btn.classList.add('hidden');
-                txt.classList.remove('hidden');
-                txt.textContent = appData.cookie.msg;
-            } else {
-                btn.classList.remove('hidden');
-                txt.classList.add('hidden');
-            }
-        }
-
-        function openCookie() {
-            const today = new Date().toISOString().split('T')[0];
-            const msg = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
-            appData.cookie = { date: today, msg: msg };
-            save();
-            confetti({ particleCount: 50, spread: 40, origin: { y: 0.3 }, colors: ['#fbbf24'] });
-            checkDailyCookie();
-        }
-
-        // --- PLANS LOGIC (MURO MEJORADO) ---
+        // --- PLANS LOGIC ---
         function renderPlans() {
             const container = document.getElementById('plans-container');
             container.innerHTML = '';
@@ -389,9 +371,7 @@
                 container.innerHTML = `<div class="text-center text-slate-400 text-xs py-4 border-2 border-dashed border-slate-200 rounded-xl">Añade aquí tus sueños post-plaza</div>`;
                 return;
             }
-            
             const today = new Date();
-            
             appData.plans.forEach((p, idx) => {
                 let timeText = "Sin fecha";
                 if(p.date) {
@@ -399,7 +379,6 @@
                     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
                     timeText = days > 0 ? `Faltan ${days} días` : '¡Fecha cumplida!';
                 }
-                
                 container.innerHTML += `
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-md flex items-center gap-4 relative overflow-hidden transform rotate-1 hover:rotate-0 transition-transform">
                         <div class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">${p.icon}</div>
@@ -415,49 +394,42 @@
 
         function addPlan() {
             Swal.fire({
-                title: 'Nuevo Sueño',
-                html: `
-                    <div class="flex flex-col gap-3">
-                        <input id="plan-title" class="swal2-input m-0 w-full" placeholder="Título (Ej: Viaje a Japón)">
-                        <div class="flex gap-2">
-                            <input id="plan-icon" class="swal2-input m-0 w-1/4 text-center" placeholder="Emoji" value="✈️">
-                            <input id="plan-date" type="date" class="swal2-input m-0 w-3/4">
-                        </div>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                confirmButtonColor: '#0f172a'
+                title: 'Nuevo Plan',
+                html: `<div class="flex flex-col gap-3"><input id="plan-title" class="swal2-input m-0 w-full" placeholder="Título (Ej: Japón)"><div class="flex gap-2"><input id="plan-icon" class="swal2-input m-0 w-1/4 text-center" placeholder="Emoji" value="✈️"><input id="plan-date" type="date" class="swal2-input m-0 w-3/4"></div></div>`,
+                showCancelButton: true, confirmButtonText: 'Guardar', confirmButtonColor: '#0f172a'
             }).then((result) => {
                 if (result.isConfirmed) {
                     const title = document.getElementById('plan-title').value;
                     const icon = document.getElementById('plan-icon').value || '📍';
                     const date = document.getElementById('plan-date').value;
-                    if(title) {
-                        appData.plans.push({ title, icon, date });
-                        save();
-                        renderPlans();
-                    }
+                    if(title) { appData.plans.push({ title, icon, date }); save(); renderPlans(); }
                 }
             });
         }
+        function removePlan(idx) { if(confirm('¿Borrar este plan?')) { appData.plans.splice(idx, 1); save(); renderPlans(); } }
 
-        function removePlan(idx) {
-            if(confirm('¿Borrar este plan?')) {
-                appData.plans.splice(idx, 1);
-                save();
-                renderPlans();
+        // --- COOKIE LOGIC ---
+        function checkDailyCookie() {
+            const today = new Date().toISOString().split('T')[0];
+            const btn = document.getElementById('btn-cookie');
+            const txt = document.getElementById('fortune-text');
+            if (appData.cookie.date === today) {
+                btn.classList.add('hidden'); txt.classList.remove('hidden'); txt.textContent = appData.cookie.msg;
+            } else {
+                btn.classList.remove('hidden'); txt.classList.add('hidden');
             }
+        }
+        function openCookie() {
+            const today = new Date().toISOString().split('T')[0];
+            const msg = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
+            appData.cookie = { date: today, msg: msg };
+            save(); confetti({ particleCount: 50, spread: 40, origin: { y: 0.3 }, colors: ['#fbbf24'] }); checkDailyCookie();
         }
 
         // --- CORE FUNCTIONS ---
         function checkDailyQuests() {
             const today = new Date().toISOString().split('T')[0];
-            if (appData.quests.date !== today) {
-                appData.quests.date = today;
-                appData.quests.items = QUESTS_LIST.map(q => ({ ...q, done: false }));
-                save();
-            }
+            if (appData.quests.date !== today) { appData.quests.date = today; appData.quests.items = QUESTS_LIST.map(q => ({ ...q, done: false })); save(); }
         }
         function toggleQuests() {
             const container = document.getElementById('quests-container');
@@ -480,7 +452,6 @@
         }
         function updateUI() {
             document.getElementById('coin-display').textContent = appData.coins;
-            // Rango
             let rank = "Novata";
             if(appData.coins >= 5) rank = "Constante";
             if(appData.coins >= 15) rank = "Experta";
@@ -491,14 +462,11 @@
             const today = new Date().toISOString().split('T')[0];
             const hasStudied = appData.lastStudy === today;
             if(hasStudied) {
-                document.getElementById('study-form').classList.add('hidden');
-                document.getElementById('study-done').classList.remove('hidden');
+                document.getElementById('study-form').classList.add('hidden'); document.getElementById('study-done').classList.remove('hidden');
             } else {
-                document.getElementById('study-form').classList.remove('hidden');
-                document.getElementById('study-done').classList.add('hidden');
+                document.getElementById('study-form').classList.remove('hidden'); document.getElementById('study-done').classList.add('hidden');
             }
-            renderRewards();
-            renderQuests();
+            renderRewards(); renderQuests();
         }
         function renderRewards() {
             const rList = document.getElementById('rewards-list');
