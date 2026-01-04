@@ -33,13 +33,32 @@
         .page.active { display: block; opacity: 1; transform: translateY(0); }
         .btn-press:active { transform: scale(0.96); transition: transform 0.1s; }
         
-        /* Badges Animations */
+        /* Animaciones Badges */
         .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
         
-        /* Checkbox custom animation */
+        /* Animaciones Checkbox */
         .quest-checkbox:checked + div { text-decoration: line-through; color: #10b981; opacity: 0.7; }
+
+        /* ESTILOS ZONA ZEN */
+        /* Respiración */
+        .breath-circle { transition: transform 4s ease-in-out, background-color 0.5s, border-color 0.5s; }
+        .inhale { transform: scale(1.5); border-color: #3b82f6; background-color: #eff6ff; }
+        .hold { transform: scale(1.5); border-color: #eab308; background-color: #fefce8; }
+        .exhale { transform: scale(1.0); border-color: #10b981; background-color: #f0fdf4; transition-duration: 8s; } /* Exhala dura 8s */
+
+        /* Burbujas */
+        .bubble { 
+            background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); 
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05);
+            transition: all 0.1s;
+        }
+        .bubble.popped { 
+            background: #f1f5f9; 
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); 
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body class="bg-thac-bg text-slate-800 h-[100dvh] flex flex-col overflow-hidden selection:bg-blue-200">
@@ -169,14 +188,70 @@
         </div>
 
         <div id="page-relax" class="page">
-            <h2 class="text-2xl font-bold text-slate-900 mb-4 mt-2">Zona Zen</h2>
-            <div class="bg-blue-50 rounded-2xl p-6 border border-blue-100 text-center mb-6">
-                <h3 class="font-bold text-blue-900 mb-4">Respiración 4-4-8</h3>
-                <div id="breath-circle" class="w-32 h-32 rounded-full border-4 border-blue-200 mx-auto flex items-center justify-center mb-4 transition-all duration-1000 bg-white">
-                    <span id="breath-text" class="text-blue-600 font-bold text-xl">Start</span>
-                </div>
-                <button onclick="startBreathing()" class="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-bold btn-press">Iniciar</button>
+            <h2 class="text-2xl font-bold text-slate-900 mb-6 mt-2">Botiquín Zen</h2>
+            
+            <div class="flex p-1 bg-slate-100 rounded-xl mb-6">
+                <button onclick="switchZen('breath')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-slate-800 shadow-sm" data-tab="breath">Respirar</button>
+                <button onclick="switchZen('bubbles')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-500" data-tab="bubbles">Burbujas</button>
+                <button onclick="switchZen('body')" class="zen-tab flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-500" data-tab="body">Cuerpo</button>
             </div>
+
+            <div id="zen-breath" class="zen-content">
+                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100 text-center relative overflow-hidden">
+                    <h3 class="font-bold text-blue-900 mb-6">Técnica 4-4-8</h3>
+                    
+                    <div id="breath-circle" class="breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative">
+                        <span id="breath-text" class="text-slate-400 font-bold text-xl">Start</span>
+                    </div>
+
+                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-sm font-bold btn-press shadow-lg shadow-blue-200">
+                        Iniciar Respiración
+                    </button>
+                    <p class="text-slate-400 text-xs mt-4">Ayuda a reducir el cortisol en 2 min.</p>
+                </div>
+            </div>
+
+            <div id="zen-bubbles" class="zen-content hidden">
+                <div class="bg-slate-200 rounded-2xl p-4 shadow-inner">
+                    <div id="bubble-grid" class="grid grid-cols-5 gap-3">
+                        </div>
+                </div>
+                <button onclick="resetBubbles()" class="w-full mt-4 bg-white text-slate-600 py-3 rounded-xl font-bold text-sm border border-slate-200 btn-press">
+                    🔄 Nueva lámina
+                </button>
+            </div>
+
+            <div id="zen-body" class="zen-content hidden space-y-3">
+                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm">
+                    <div class="text-3xl">🦒</div>
+                    <div>
+                        <div class="font-bold text-slate-800">Cuello</div>
+                        <div class="text-xs text-slate-500">Gira suavemente a los lados (10s)</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm">
+                    <div class="text-3xl">🤷‍♀️</div>
+                    <div>
+                        <div class="font-bold text-slate-800">Hombros</div>
+                        <div class="text-xs text-slate-500">Rotaciones hacia atrás (10 reps)</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm">
+                    <div class="text-3xl">🤲</div>
+                    <div>
+                        <div class="font-bold text-slate-800">Muñecas</div>
+                        <div class="text-xs text-slate-500">Estira los flexores con el brazo recto</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4 shadow-sm">
+                    <div class="text-3xl">🐈</div>
+                    <div>
+                        <div class="font-bold text-slate-800">Gato Sentado</div>
+                        <div class="text-xs text-slate-500">Arquea la espalda hacia delante y atrás</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="h-10"></div>
         </div>
 
@@ -206,7 +281,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v13_quests_dropdown'; 
+        const DATA_KEY = 'thac_app_v14_zen_tools'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -222,11 +297,10 @@
             { id: 'master', icon: '👑', title: 'Inspectora', desc: 'Leyenda: 50 días de estudio', condition: (d) => d.coins >= 50 }
         ];
 
-        // MISIONES EDITADAS
         const QUESTS_LIST = [
             { id: 'sun', text: '☀️ Tomar 10 min el sol' },
             { id: 'walk', text: '🚶‍♀️ Dar un paseo' },
-            { id: 'gym', text: '💪 Gym / Pilates' }, // CAMBIADO AQUÍ
+            { id: 'gym', text: '💪 Gym / Pilates' },
             { id: 'water', text: '💧 Beber agua' },
             { id: 'series', text: '📺 Cap. de Serie' },
             { id: 'photo', text: '📸 Selfie a Javi' }
@@ -251,6 +325,7 @@
             quests: { date: '', items: [] } 
         };
         let studyChartInstance = null;
+        let breathInterval = null; // Controla el ciclo de respiración
 
         function initialRewards() {
             return [
@@ -283,6 +358,7 @@
             renderCountdowns();
             renderBadges();
             updateChart();
+            initBubbles(); // Generar burbujas al inicio
         }
 
         function save() {
@@ -291,7 +367,94 @@
             renderBadges();
         }
 
-        // --- QUESTS LOGIC ---
+        // --- ZONA ZEN LOGIC ---
+        function switchZen(tab) {
+            document.querySelectorAll('.zen-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('zen-'+tab).classList.remove('hidden');
+            
+            document.querySelectorAll('.zen-tab').forEach(el => {
+                el.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
+                el.classList.add('text-slate-500');
+            });
+            document.querySelector(`.zen-tab[data-tab="${tab}"]`).classList.add('bg-white', 'text-slate-800', 'shadow-sm');
+            document.querySelector(`.zen-tab[data-tab="${tab}"]`).classList.remove('text-slate-500');
+            
+            // Si salimos de respiración, parar
+            if(tab !== 'breath') stopBreathing();
+        }
+
+        // RESPIRACIÓN
+        function toggleBreathing() {
+            if(breathInterval) {
+                stopBreathing();
+            } else {
+                startBreathingCycle();
+            }
+        }
+
+        function startBreathingCycle() {
+            const btn = document.getElementById('btn-breath-toggle');
+            btn.textContent = "Detener";
+            btn.classList.replace('bg-blue-600', 'bg-slate-800');
+            
+            runPhase(); // Primer ciclo inmediato
+            breathInterval = setInterval(runPhase, 16000); // 4+4+8 = 16s
+        }
+
+        function runPhase() {
+            const circle = document.getElementById('breath-circle');
+            const text = document.getElementById('breath-text');
+            
+            // INHALA (4s)
+            text.textContent = "Inhala";
+            circle.className = "breath-circle inhale w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative";
+            
+            setTimeout(() => {
+                // MANTEN (4s)
+                text.textContent = "Mantén";
+                circle.className = "breath-circle hold w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative";
+                
+                setTimeout(() => {
+                    // EXHALA (8s)
+                    text.textContent = "Exhala";
+                    circle.className = "breath-circle exhale w-40 h-40 rounded-full border-4 mx-auto flex items-center justify-center z-10 relative";
+                }, 4000);
+            }, 4000);
+        }
+
+        function stopBreathing() {
+            clearInterval(breathInterval);
+            breathInterval = null;
+            const circle = document.getElementById('breath-circle');
+            const text = document.getElementById('breath-text');
+            const btn = document.getElementById('btn-breath-toggle');
+            
+            // Reset visuales
+            circle.className = "breath-circle w-40 h-40 rounded-full border-4 border-blue-400 mx-auto flex items-center justify-center bg-white z-10 relative";
+            text.textContent = "Start";
+            btn.textContent = "Iniciar Respiración";
+            btn.classList.replace('bg-slate-800', 'bg-blue-600');
+        }
+
+        // BURBUJAS
+        function initBubbles() {
+            const grid = document.getElementById('bubble-grid');
+            grid.innerHTML = '';
+            for(let i=0; i<20; i++) {
+                grid.innerHTML += `<div class="bubble w-12 h-12 rounded-full cursor-pointer" onclick="popBubble(this)"></div>`;
+            }
+        }
+        function popBubble(el) {
+            if(!el.classList.contains('popped')) {
+                el.classList.add('popped');
+                if(navigator.vibrate) navigator.vibrate(50); // Vibración
+            }
+        }
+        function resetBubbles() {
+            initBubbles();
+        }
+
+        // --- RESTO DE LÓGICA (QUESTS, STREAK, ETC) ---
         function checkDailyQuests() {
             const today = new Date().toISOString().split('T')[0];
             if (appData.quests.date !== today) {
@@ -406,7 +569,6 @@
             if(unlocked) setTimeout(() => Swal.fire({ title: '¡PREMIO NUEVO!', text: unlocked.title, icon: 'success' }), 1000);
         }
 
-        // --- BADGE INTERACTION ---
         function renderBadges() {
             const container = document.getElementById('badges-container');
             container.innerHTML = '';
@@ -502,7 +664,6 @@
         }
 
         function resetApp() { if(confirm("¿Seguro?")) { localStorage.removeItem(DATA_KEY); location.reload(); } }
-        function startBreathing() { Swal.fire({timer: 2000, showConfirmButton: false, title: 'Inhala...'}); }
 
         init();
     </script>
