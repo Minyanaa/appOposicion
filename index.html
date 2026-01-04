@@ -36,7 +36,7 @@
         .badge-locked { filter: grayscale(100%); opacity: 0.5; }
         .badge-unlocked { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* --- ZONA ZEN --- */
+        /* ZONA ZEN */
         .breath-circle { transition: transform 4s ease-in-out, background-color 0.5s, border-color 0.5s; }
         .inhale { transform: scale(1.5); border-color: #3b82f6; background-color: #eff6ff; }
         .hold { transform: scale(1.5); border-color: #eab308; background-color: #fefce8; }
@@ -44,89 +44,11 @@
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* --- OFICINA VIRTUAL PRO (CSS SCENE) --- */
-        .room-scene {
-            position: relative;
-            width: 100%;
-            height: 240px;
-            background: #e2e8f0; /* Color pared base */
-            border-radius: 1.5rem;
-            overflow: hidden;
-            border: 1px solid #cbd5e1;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        
-        /* Pared y Ventana */
-        .room-wall {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 75%;
-            background: #f1f5f9;
-            z-index: 0;
-        }
-        .room-window {
-            position: absolute;
-            top: 20px; left: 50%; transform: translateX(-50%);
-            width: 100px; height: 80px;
-            background: #1e293b; /* Noche por defecto */
-            border: 4px solid #cbd5e1;
-            border-radius: 4px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-            transition: background 1s;
-        }
-        .room-window.day { background: #bfdbfe; box-shadow: inset 0 0 10px rgba(255,255,255,0.5); } /* Día */
-        .room-window::after { /* Marco cruz */
-            content: ''; position: absolute; top: 0; left: 50%; width: 4px; height: 100%; background: #cbd5e1; transform: translateX(-50%);
-        }
-        .room-window::before { /* Marco cruz */
-            content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 4px; background: #cbd5e1; transform: translateY(-50%); z-index: 1;
-        }
-
-        /* Suelo */
-        .room-floor {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 25%;
-            background: #d6bcfa; /* Color alfombra base o madera */
-            background: repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #cbd5e1 10px, #cbd5e1 20px); /* Parquet falso */
-            z-index: 1;
-            border-top: 2px solid #94a3b8;
-        }
-
-        /* Muebles (CSS Shapes + Emojis positions) */
-        .desk-base {
-            position: absolute;
-            bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 160px; height: 80px;
-            z-index: 10;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        .desk-top {
-            width: 100%; height: 12px;
-            background: #475569;
-            border-radius: 4px;
-            position: absolute; top: 0; left: 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 2;
-        }
-        .desk-leg-l { position: absolute; top: 12px; left: 15px; width: 8px; height: 68px; background: #334155; }
-        .desk-leg-r { position: absolute; top: 12px; right: 15px; width: 8px; height: 68px; background: #334155; }
-
-        /* Items específicos */
-        .item { position: absolute; transition: all 0.5s ease; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15)); opacity: 0; transform: translateY(20px); }
-        .item.visible { opacity: 1; transform: translateY(0); }
-
-        .i-chair { bottom: 35px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; z-index: 5; } /* Detrás mesa */
-        .i-rug { bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 4rem; z-index: 2; opacity: 0.7; }
-        .i-plant { bottom: 25px; left: 15px; font-size: 4rem; z-index: 20; }
-        .i-laptop { bottom: 78px; left: 50%; transform: translateX(-50%); font-size: 2.2rem; z-index: 15; }
-        .i-lamp { bottom: 78px; left: 30px; font-size: 2.5rem; z-index: 15; }
-        .i-books { bottom: 78px; right: 35px; font-size: 1.5rem; z-index: 15; }
-        .i-cat { bottom: 75px; right: 55px; font-size: 1.8rem; z-index: 16; }
-        .i-coffee { bottom: 78px; right: 20px; font-size: 1.2rem; z-index: 16; }
-
+        /* BONSÁI ANIMADO (SVG) */
+        .leaf { transform-origin: center bottom; animation: sway 3s infinite ease-in-out alternate; }
+        .flower { transform-origin: center; animation: bloom 2s ease-out forwards; }
+        @keyframes sway { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+        @keyframes bloom { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
     </style>
 </head>
@@ -159,29 +81,15 @@
                 </div>
             </div>
 
-            <div class="room-scene mb-6" id="office-container">
-                <div class="room-wall"></div>
-                <div class="room-window" id="room-window"></div>
-                <div class="room-floor"></div>
-                
-                <div class="item i-rug">🧶</div>
-                <div class="item i-plant">🌿</div>
-                <div class="item i-chair">💺</div>
-                
-                <div class="desk-base">
-                    <div class="desk-top"></div>
-                    <div class="desk-leg-l"></div>
-                    <div class="desk-leg-r"></div>
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 mb-6 p-4 flex flex-col items-center justify-center relative overflow-hidden" style="height: 260px;">
+                <div id="bonsai-container" class="w-full h-full flex items-end justify-center pb-4">
+                    </div>
+                <div class="absolute top-4 left-4 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-100 flex items-center gap-1">
+                    <span>🌱</span> <span id="bonsai-level-text">Semilla</span>
                 </div>
-
-                <div class="item i-laptop">💻</div>
-                <div class="item i-lamp">💡</div>
-                <div class="item i-books">📚</div>
-                <div class="item i-coffee">☕</div>
-                <div class="item i-cat">🐈</div>
             </div>
 
-            <button onclick="navTo('study')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press mb-6 group">
+            <button onclick="navTo('study')" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-between btn-press mb-6 group transition-all">
                 <div class="text-left">
                     <div class="text-blue-100 text-xs font-bold uppercase mb-1">Objetivo Diario</div>
                     <div class="text-2xl font-bold">Fichar Estudio 📝</div>
@@ -250,7 +158,7 @@
             </div>
             <div id="plans-container" class="space-y-3 mb-8"></div>
 
-            <h3 class="font-bold text-slate-800 text-lg mb-4">⏳ Hitos de la Opo</h3>
+            <h3 class="font-bold text-slate-800 text-lg mb-4">⏳ Cuenta Atrás THAC</h3>
             <div id="countdown-container" class="space-y-4"></div>
             
             <div class="h-10"></div>
@@ -293,7 +201,7 @@
     </nav>
 
     <script>
-        const DATA_KEY = 'thac_app_v18_final_layout'; 
+        const DATA_KEY = 'thac_app_v19_bonsai'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -371,7 +279,7 @@
             renderCountdowns();
             renderBadges();
             renderPlans();
-            renderOffice();
+            renderBonsai();
             updateChart();
             initBubbles();
         }
@@ -380,39 +288,97 @@
             localStorage.setItem(DATA_KEY, JSON.stringify(appData));
             updateUI();
             renderBadges();
-            renderOffice();
+            renderBonsai();
         }
 
-        // --- OFFICE LOGIC (SCENE) ---
-        function renderOffice() {
+        // --- BONSÁI GENERATIVO (SVG) ---
+        function renderBonsai() {
             const c = appData.coins;
-            // Selectores
-            const win = document.querySelector('.room-window');
-            const items = document.querySelectorAll('.item');
+            const container = document.getElementById('bonsai-container');
+            const levelText = document.getElementById('bonsai-level-text');
             
-            // Lógica Día/Noche
-            const hour = new Date().getHours();
-            if(hour > 7 && hour < 20) win.classList.add('day'); else win.classList.remove('day');
+            // Colores
+            const potColor = "#92400e";
+            const trunkColor = "#5d4037";
+            const leafColor = "#4ade80";
+            const flowerColor = "#f472b6";
 
-            // Mostrar items según monedas (CSS Opacity)
-            // c >= 1 -> Rug
-            // c >= 5 -> Plant
-            // c >= 10 -> Chair
-            // c >= 15 -> (Ya está ventana)
-            // c >= 20 -> Laptop
-            // c >= 25 -> Lamp
-            // c >= 30 -> Coffee
-            // c >= 40 -> Books
-            // c >= 50 -> Cat
+            let svgContent = '';
             
-            if(c >= 1) document.querySelector('.i-rug').classList.add('visible');
-            if(c >= 5) document.querySelector('.i-plant').classList.add('visible');
-            if(c >= 10) document.querySelector('.i-chair').classList.add('visible');
-            if(c >= 20) document.querySelector('.i-laptop').classList.add('visible');
-            if(c >= 25) document.querySelector('.i-lamp').classList.add('visible');
-            if(c >= 30) document.querySelector('.i-coffee').classList.add('visible');
-            if(c >= 40) document.querySelector('.i-books').classList.add('visible');
-            if(c >= 50) document.querySelector('.i-cat').classList.add('visible');
+            // 1. MACETA (Siempre visible)
+            svgContent += `<path d="M70 230 L90 280 L210 280 L230 230 Z" fill="${potColor}" stroke="#78350f" stroke-width="2"/>`;
+            svgContent += `<ellipse cx="150" cy="230" rx="80" ry="10" fill="#3e2723"/>`; // Tierra
+
+            // LOGICA CRECIMIENTO
+            if(c >= 1) {
+                // FASE 1: BROTE (1-5 días)
+                levelText.textContent = "Brote";
+                svgContent += `<path d="M150 230 Q150 200 140 190" stroke="#4ade80" stroke-width="4" fill="none"/>`;
+                svgContent += `<circle cx="140" cy="190" r="8" fill="${leafColor}" class="leaf"/>`;
+                svgContent += `<circle cx="155" cy="200" r="6" fill="${leafColor}" class="leaf"/>`;
+            }
+            
+            if(c >= 6) {
+                // FASE 2: ARBOLITO (6-15 días) - Sobrescribe brote
+                levelText.textContent = "Arbolito";
+                svgContent = `<path d="M70 230 L90 280 L210 280 L230 230 Z" fill="${potColor}" stroke="#78350f" stroke-width="2"/>`;
+                svgContent += `<ellipse cx="150" cy="230" rx="80" ry="10" fill="#3e2723"/>`;
+                
+                // Tronco
+                svgContent += `<path d="M150 230 C150 200 140 180 140 150" stroke="${trunkColor}" stroke-width="8" stroke-linecap="round" fill="none"/>`;
+                // Ramas
+                svgContent += `<path d="M140 180 Q120 160 110 150" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
+                // Hojas
+                svgContent += `<circle cx="140" cy="150" r="15" fill="${leafColor}" class="leaf" style="animation-delay:0s"/>`;
+                svgContent += `<circle cx="110" cy="150" r="12" fill="${leafColor}" class="leaf" style="animation-delay:0.5s"/>`;
+            }
+
+            if(c >= 16) {
+                // FASE 3: ÁRBOL JOVEN (16-30 días)
+                levelText.textContent = "Creciendo";
+                svgContent = `<path d="M70 230 L90 280 L210 280 L230 230 Z" fill="${potColor}" stroke="#78350f" stroke-width="2"/>`;
+                svgContent += `<ellipse cx="150" cy="230" rx="80" ry="10" fill="#3e2723"/>`;
+                
+                svgContent += `<path d="M150 230 C160 200 130 150 140 100" stroke="${trunkColor}" stroke-width="12" stroke-linecap="round" fill="none"/>`;
+                svgContent += `<path d="M145 180 Q180 160 190 140" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
+                svgContent += `<path d="M140 140 Q100 120 90 110" stroke="${trunkColor}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
+                
+                svgContent += `<circle cx="140" cy="100" r="25" fill="${leafColor}" class="leaf"/>`;
+                svgContent += `<circle cx="190" cy="140" r="20" fill="${leafColor}" class="leaf" style="animation-delay:0.3s"/>`;
+                svgContent += `<circle cx="90" cy="110" r="18" fill="${leafColor}" class="leaf" style="animation-delay:0.7s"/>`;
+            }
+
+            if(c >= 31) {
+                // FASE 4: BONSÁI MADURO (31-50 días)
+                levelText.textContent = "Bonsái";
+                svgContent = `<path d="M70 230 L90 280 L210 280 L230 230 Z" fill="${potColor}" stroke="#78350f" stroke-width="2"/>`;
+                svgContent += `<ellipse cx="150" cy="230" rx="80" ry="10" fill="#3e2723"/>`;
+                
+                svgContent += `<path d="M150 230 C160 180 120 140 140 80" stroke="${trunkColor}" stroke-width="16" stroke-linecap="round" fill="none"/>`;
+                svgContent += `<path d="M145 170 Q200 150 210 120" stroke="${trunkColor}" stroke-width="8" stroke-linecap="round" fill="none"/>`;
+                svgContent += `<path d="M135 130 Q80 110 70 90" stroke="${trunkColor}" stroke-width="7" stroke-linecap="round" fill="none"/>`;
+                
+                // Copas
+                svgContent += `<circle cx="140" cy="80" r="35" fill="${leafColor}" class="leaf"/>`;
+                svgContent += `<circle cx="210" cy="120" r="28" fill="${leafColor}" class="leaf" style="animation-delay:0.2s"/>`;
+                svgContent += `<circle cx="70" cy="90" r="25" fill="${leafColor}" class="leaf" style="animation-delay:0.5s"/>`;
+                svgContent += `<circle cx="160" cy="100" r="20" fill="${leafColor}" class="leaf" style="animation-delay:0.8s"/>`;
+            }
+
+            if(c >= 50) {
+                // FASE 5: FLORECIDO (+50 días)
+                levelText.textContent = "Legendario";
+                // Añadir flores al anterior
+                svgContent += `<circle cx="120" cy="70" r="5" fill="${flowerColor}" class="flower"/>`;
+                svgContent += `<circle cx="150" cy="90" r="5" fill="${flowerColor}" class="flower" style="animation-delay:0.1s"/>`;
+                svgContent += `<circle cx="200" cy="110" r="5" fill="${flowerColor}" class="flower" style="animation-delay:0.3s"/>`;
+                svgContent += `<circle cx="80" cy="80" r="5" fill="${flowerColor}" class="flower" style="animation-delay:0.4s"/>`;
+                svgContent += `<circle cx="220" cy="130" r="5" fill="${flowerColor}" class="flower" style="animation-delay:0.6s"/>`;
+            }
+
+            if(c === 0) levelText.textContent = "Planta tu semilla";
+
+            container.innerHTML = `<svg width="300" height="300" viewBox="0 0 300 300">${svgContent}</svg>`;
         }
 
         // --- PLANS LOGIC ---
@@ -548,7 +514,7 @@
             if (new Date().getDay() === 6 && !appData.badges.includes('weekend')) appData.badges.push('weekend');
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             document.getElementById('done-msg').textContent = ["¡Enorme!", "Un día más cerca.", "Constancia pura.", "A descansar."][Math.floor(Math.random() * 4)];
-            save(); updateChart(); renderOffice();
+            save(); updateChart(); renderBonsai();
             const unlocked = appData.wallet.find(i => i.cost === appData.coins);
             if(unlocked) setTimeout(() => Swal.fire({ title: '¡PREMIO NUEVO!', text: unlocked.title, icon: 'success' }), 1000);
         }
@@ -590,7 +556,7 @@
             appData.coins += days;
             appData.streak += days; 
             for(let i=0; i<days; i++) appData.history.push({date: 'simulated', subject: 'Simulacro'});
-            save(); Swal.close(); updateChart(); renderOffice();
+            save(); Swal.close(); updateChart(); renderBonsai();
             Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 2000}).fire({icon: 'success', title: `+${days} Días simulados`});
         }
         function redeem(id) {
