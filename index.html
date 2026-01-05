@@ -6,11 +6,12 @@
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="THAC App">
+    <meta name="apple-mobile-web-app-title" content="Sara&Javi">
     <meta name="format-detection" content="telephone=no">
     <meta name="color-scheme" content="light only">
+    <meta name="theme-color" content="#ffffff">
     
-    <title>THAC Companion</title>
+    <title>Sara&Javi</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
@@ -50,7 +51,7 @@
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* BONSÁI ANIMADO (Dinámico y Vivo) */
+        /* BONSÁI ANIMADO */
         .foliage-sway {
             transform-origin: center 85%; 
             transform-box: fill-box; 
@@ -233,8 +234,8 @@
     </nav>
 
     <script>
-        // --- LLAVE MAESTRA FIJA ---
-        const DATA_KEY = 'thac_app_master_db'; // Nombre definitivo
+        // --- LLAVE MAESTRA FINAL ---
+        const DATA_KEY = 'sara_javi_final_db'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -287,11 +288,14 @@
                 {id: 1, title: "Masaje Relajante", cost: 5, active: true},
                 {id: 2, title: "Entreno Gym Juntos", cost: 8, active: true},
                 {id: 3, title: "Cena en sitio Guay", cost: 12, active: true},
-                {id: 4, title: "Cine + Palomitas", cost: 18, active: true},
+                {id: 4, title: "Vale: Ropa/Material Gym", cost: 18, active: true},
                 {id: 5, title: "Tu Comida Favorita", cost: 22, active: true},
                 {id: 6, title: "Brunch de Domingo", cost: 30, active: true},
-                {id: 7, title: "Vale Comodín", cost: 40, active: true},
-                {id: 8, title: "Escapada Finde", cost: 60, active: true}
+                {id: 7, title: "Clase de Hyrox Juntos", cost: 38, active: true},
+                {id: 8, title: "Vale Comodín", cost: 45, active: true},
+                {id: 9, title: "Tarde de Spa", cost: 55, active: true},
+                {id: 10, title: "Premio Misterioso", cost: 65, active: true},
+                {id: 11, title: "Escapada Finde", cost: 80, active: true}
             ];
         }
 
@@ -302,12 +306,11 @@
                     let loaded = JSON.parse(stored);
                     if(!loaded.plans) loaded.plans = [];
                     if(!loaded.cookie) loaded.cookie = { date: '', msg: '' };
-                    if(!loaded.wallet || loaded.wallet.length < 8) loaded.wallet = initialRewards();
+                    // Reset wallet to match new list structure
+                    if(!loaded.wallet || loaded.wallet.length !== 11) loaded.wallet = initialRewards();
                     if(!loaded.quests) loaded.quests = { date: '', items: [] };
                     appData = loaded;
-                } catch(e) {
-                    console.error("Error cargando datos, se usarán valores por defecto");
-                }
+                } catch(e) { console.error("Error data"); }
             }
 
             checkDailyQuests();
@@ -328,7 +331,7 @@
             renderBonsai();
         }
 
-        // --- BONSÁI GENERATIVO (V25) ---
+        // --- BONSÁI GENERATIVO ---
         function renderBonsai() {
             const c = appData.coins;
             const container = document.getElementById('bonsai-container');
@@ -353,7 +356,7 @@
                  svgContent += `<path d="M148 185 Q156 180 151 175 Q141 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
             }
 
-            if (c >= 5) { // FASE 2 MEJORADA
+            if (c >= 5) { // FASE 2
                 levelText.textContent = "Brote";
                 svgContent += `<g class="foliage-sway">`;
                 svgContent += `<path d="M150 200 C155 180 145 160 150 145" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
@@ -448,6 +451,7 @@
                 svgContent +=drawCloud(75, 95, 24, blossomColor, blossomCenter);
                 svgContent +=drawCloud(120, 75, 19, blossomColor, blossomCenter);
                 svgContent +=drawCloud(185, 95, 17, blossomColor, blossomCenter);
+                // Flores
                 svgContent +=drawSakura(140, 65, blossomColor, blossomCenter, "0.1s"); svgContent +=drawSakura(170, 80, blossomColor, blossomCenter, "0.3s");
                 svgContent +=drawSakura(200, 105, blossomColor, blossomCenter, "0.5s"); svgContent +=drawSakura(230, 125, blossomColor, blossomCenter, "0.7s");
                 svgContent +=drawSakura(60, 85, blossomColor, blossomCenter, "0.2s"); svgContent +=drawSakura(90, 105, blossomColor, blossomCenter, "0.4s");
