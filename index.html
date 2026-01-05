@@ -234,7 +234,7 @@
     </nav>
 
     <script>
-        // --- LLAVE MAESTRA FINAL ---
+        // --- LLAVE MAESTRA FIJA ---
         const DATA_KEY = 'sara_javi_final_db'; 
         
         const EXAMS = [
@@ -288,12 +288,12 @@
                 {id: 1, title: "Masaje Relajante", cost: 5, active: true},
                 {id: 2, title: "Entreno Gym Juntos", cost: 8, active: true},
                 {id: 3, title: "Cena en sitio Guay", cost: 15, active: true},
-                {id: 4, title: "Tu Comida Favortia con Chófer", cost: 25, active: true},
+                {id: 4, title: "Tu Comida Favorita con Chófer", cost: 25, active: true},
                 {id: 5, title: "Clase de Hyrox Juntos", cost: 38, active: true},
                 {id: 6, title: "Vale Comodín", cost: 45, active: true},
                 {id: 7, title: "Tarde de Spa", cost: 55, active: true},
                 {id: 8, title: "Premio Misterioso", cost: 65, active: true},
-                {id: 9, title: "Escapada Finde", cost: 80, active: true}
+                {id: 9, title: "Escapada Finde", cost: 70, active: true}
             ];
         }
 
@@ -304,8 +304,12 @@
                     let loaded = JSON.parse(stored);
                     if(!loaded.plans) loaded.plans = [];
                     if(!loaded.cookie) loaded.cookie = { date: '', msg: '' };
-                    // Reset wallet to match new list structure
-                    if(!loaded.wallet || loaded.wallet.length !== 11) loaded.wallet = initialRewards();
+                    
+                    // ACTULIZAR PREMIOS: Si la longitud no es 9 (la nueva lista), forzamos actualización
+                    if(!loaded.wallet || loaded.wallet.length !== 9) {
+                        loaded.wallet = initialRewards();
+                    }
+                    
                     if(!loaded.quests) loaded.quests = { date: '', items: [] };
                     appData = loaded;
                 } catch(e) { console.error("Error data"); }
@@ -431,6 +435,7 @@
                 svgContent +=drawCloud(75, 95, 24, leafColorLight, leafColorDark);
                 svgContent +=drawCloud(120, 75, 19, leafColorLight, leafColorDark);
                 svgContent +=drawCloud(185, 95, 17, leafColorLight, leafColorDark);
+                // Capullos
                 svgContent +=drawBud(145, 70, blossomColor); svgContent +=drawBud(165, 85, blossomColor);
                 svgContent +=drawBud(205, 110, blossomColor); svgContent +=drawBud(225, 120, blossomColor);
                 svgContent +=drawBud(65, 90, blossomColor); svgContent +=drawBud(85, 100, blossomColor);
@@ -444,12 +449,13 @@
                 svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
                 svgContent += `<path d="M155 100 Q125 90 120 75" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
+                // Copas rosadas
                 svgContent +=drawCloud(155, 80, 33, blossomColor, blossomCenter);
                 svgContent +=drawCloud(215, 115, 27, blossomColor, blossomCenter);
                 svgContent +=drawCloud(75, 95, 24, blossomColor, blossomCenter);
                 svgContent +=drawCloud(120, 75, 19, blossomColor, blossomCenter);
                 svgContent +=drawCloud(185, 95, 17, blossomColor, blossomCenter);
-                // Flores
+                // Flores animadas
                 svgContent +=drawSakura(140, 65, blossomColor, blossomCenter, "0.1s"); svgContent +=drawSakura(170, 80, blossomColor, blossomCenter, "0.3s");
                 svgContent +=drawSakura(200, 105, blossomColor, blossomCenter, "0.5s"); svgContent +=drawSakura(230, 125, blossomColor, blossomCenter, "0.7s");
                 svgContent +=drawSakura(60, 85, blossomColor, blossomCenter, "0.2s"); svgContent +=drawSakura(90, 105, blossomColor, blossomCenter, "0.4s");
