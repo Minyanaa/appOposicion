@@ -50,25 +50,52 @@
         .bubble { background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0); box-shadow: 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .bubble.popped { background: #f1f5f9; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
 
-        /* BONSÁI ANIMADO (Dinámico y Vivo) */
-        .foliage-sway {
-            transform-origin: center 85%; 
-            transform-box: fill-box; 
-            animation: strongWind 3s ease-in-out infinite alternate;
+        /* --- BONSÁI GENERATIVO V2 (Motor Gráfico Mejorado) --- */
+        .bonsai-wrapper { transform-origin: bottom center; }
+
+        /* El tronco se mece lento y pesado (Simulación de madera) */
+        .trunk-sway {
+            transform-origin: 50% 100%;
+            animation: trunkWind 6s ease-in-out infinite alternate;
         }
-        .flower-bloom { 
-            transform-origin: center; 
-            transform-box: fill-box;
-            animation: bloomFlower 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
+
+        /* Las hojas se mueven más rápido y con "ruido" (Simulación de follaje) */
+        .leaf-rustle {
+            transform-origin: 50% 50%;
+            animation: leafWind 3s ease-in-out infinite alternate-reverse;
         }
-        @keyframes strongWind {
-            0% { transform: rotate(-4deg) translateX(-3px); }
-            100% { transform: rotate(4deg) translateX(3px); }
+
+        /* Partículas cayendo (Pétalos/Polen en nivel alto) */
+        .falling-particle {
+            animation: fallDown 4s linear infinite;
+            opacity: 0;
+            pointer-events: none;
         }
-        @keyframes bloomFlower { 
-            0% { transform: scale(0) rotate(-15deg); opacity: 0; } 
-            100% { transform: scale(1) rotate(0deg); opacity: 1; } 
+
+        /* Animación de entrada al cambiar de fase */
+        .grow-pop { animation: growSpring 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        @keyframes trunkWind {
+            0% { transform: rotate(-1deg); }
+            100% { transform: rotate(1deg); }
         }
+
+        @keyframes leafWind {
+            0% { transform: translate(0, 0) rotate(-2deg); }
+            100% { transform: translate(2px, 1px) rotate(2deg); }
+        }
+
+        @keyframes fallDown {
+            0% { transform: translate(0, -10px) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(-10px, 60px) rotate(180deg); opacity: 0; }
+        }
+
+        @keyframes growSpring {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
     </style>
 </head>
@@ -234,7 +261,7 @@
 
     <script>
         // --- LLAVE MAESTRA FIJA ---
-        const DATA_KEY = 'thac_app_master_db'; // Nombre definitivo
+        const DATA_KEY = 'thac_app_master_db'; 
         
         const EXAMS = [
             { name: "1er Ejercicio", date: "2026-03-22", color: "blue" },
@@ -252,7 +279,7 @@
 
         const FORTUNES = [
             "El éxito es la suma de pequeños esfuerzos repetidos.", "Hoy es un buen día para estar orgullosa de ti.", "Confía en tu yo del futuro, te lo agradecerá.",
-            "No te pares hasta que te sientas orgullosa.", "Eres más fuerte que tus excusas.", "La constancia siempre gana al talento .",
+            "No te pares hasta que te sientas orgullosa.", "Eres más fuerte que tus excusas.", "La constancia siempre gana al talento.",
             "Un día más es un día menos.", "Estás construyendo tu libertad.", "Respira. Lo estás haciendo bien.", "Tu esfuerzo tiene recompensa, prometido.",
             "Visualiza la plaza. Es tuya.", "La disciplina es amor propio.", "Hoy sumas. Mañana recoges.", "Cada tema estudiado es un ladrillo de tu castillo.",
             "No necesitas suerte, necesitas constancia.", "Eres capaz de todo lo que te propongas.", "Descansar también es parte del trabajo.",
@@ -328,160 +355,186 @@
             renderBonsai();
         }
 
-        // --- BONSÁI GENERATIVO (V25) ---
+        // --- MOTOR BONSÁI V2 (Generación Procedural por Fases) ---
         function renderBonsai() {
             const c = appData.coins;
             const container = document.getElementById('bonsai-container');
             const levelText = document.getElementById('bonsai-level-text');
             
-            const potColor = "#7c2d12";
-            const soilColor = "#451a03";
-            const trunkColor = "#573c29";
-            const leafColorLight = "#a7f3d0";
-            const leafColorDark = "#059669";
-            const blossomColor = "#fbcfe8";
-            const blossomCenter = "#db2777";
+            // Calculamos la fase (cada 5 días es una evolución notable)
+            let stage = Math.floor(c / 5);
+            if (stage > 7) stage = 7; // Cap máximo visual
 
-            let svgContent = `<ellipse cx="150" cy="235" rx="60" ry="6" fill="#000000" opacity="0.15"/>`;
-            svgContent += `<path d="M100 200 L115 230 Q150 235 185 230 L200 200 Q150 195 100 200 Z" fill="${potColor}" stroke="#5b230d" stroke-width="1.5"/>`;
-            svgContent += `<ellipse cx="150" cy="200" rx="50" ry="7" fill="${soilColor}"/>`;
+            // Paleta de colores "Zen"
+            const pal = {
+                pot: '#8D6E63', // Marrón arcilla
+                potDark: '#5D4037',
+                soil: '#3E2723',
+                trunk: '#4E342E',
+                trunkLight: '#795548',
+                leafBase: '#66BB6A', // Verde base
+                leafShadow: '#2E7D32', // Verde oscuro
+                leafLight: '#A5D6A7', // Verde luz
+                flower: '#F48FB1', // Rosa flor
+                flowerCenter: '#AD1457'
+            };
 
-            if (c >= 1) { // FASE 1
-                levelText.textContent = "Semilla";
-                 svgContent += `<path d="M150 200 Q150 190 148 185" stroke="#4ade80" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
-                 svgContent += `<path d="M148 185 Q140 180 145 175 Q155 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
-                 svgContent += `<path d="M148 185 Q156 180 151 175 Q141 180 148 185 Z" fill="${leafColorLight}" stroke="${leafColorDark}" stroke-width="0.5"/>`;
+            // Estructuras SVG por fases
+            let svgInner = '';
+            let label = "Semilla";
+
+            // --- 1. FONDO (Sombra Maceta) ---
+            svgInner += `<ellipse cx="150" cy="235" rx="55" ry="5" fill="#000000" opacity="0.1"/>`;
+
+            // --- 2. MACETA (Siempre visible) ---
+            svgInner += `
+                <g class="grow-pop">
+                    <path d="M110 200 L120 230 Q150 235 180 230 L190 200 Z" fill="${pal.pot}" stroke="${pal.potDark}" stroke-width="2"/>
+                    <path d="M110 200 Q150 210 190 200" fill="none" stroke="${pal.potDark}" stroke-width="1" opacity="0.3"/>
+                    <ellipse cx="150" cy="200" rx="40" ry="6" fill="${pal.soil}"/>
+                </g>
+            `;
+
+            // --- 3. LÓGICA DE CRECIMIENTO ---
+            let treeContent = '';
+            
+            if (stage === 0) {
+                // FASE 0: Semilla / Brote Tímido (0-4 días)
+                label = "Semilla";
+                treeContent += `
+                    <g class="leaf-rustle" style="transform-origin: 150px 200px;">
+                        <path d="M150 200 Q150 190 145 185" stroke="#81C784" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <ellipse cx="142" cy="182" rx="5" ry="3" fill="${pal.leafLight}" transform="rotate(-30 142 182)"/>
+                        <ellipse cx="148" cy="180" rx="4" ry="3" fill="${pal.leafBase}" transform="rotate(10 148 180)"/>
+                    </g>`;
+            } 
+            else if (stage === 1) {
+                // FASE 1: Plantón (5-9 días)
+                label = "Brote";
+                treeContent += `
+                    <g class="trunk-sway">
+                        <path d="M150 200 Q152 180 150 160" stroke="${pal.trunk}" stroke-width="4" stroke-linecap="round" fill="none"/>
+                        <g class="leaf-rustle">
+                            ${drawLeafCluster(150, 160, 15, pal.leafBase, pal.leafLight)}
+                            ${drawLeafCluster(145, 170, 10, pal.leafShadow, pal.leafBase)}
+                        </g>
+                    </g>`;
+            }
+            else if (stage === 2) {
+                // FASE 2: Arbolito Joven (10-14 días)
+                label = "Arbolito";
+                treeContent += `
+                    <g class="trunk-sway">
+                        <path d="M150 200 C160 180 140 160 155 130" stroke="${pal.trunk}" stroke-width="8" stroke-linecap="round" fill="none"/>
+                        <path d="M152 160 Q170 150 175 140" stroke="${pal.trunk}" stroke-width="4" stroke-linecap="round" fill="none"/>
+                        <g class="leaf-rustle">
+                            ${drawLeafCluster(155, 130, 25, pal.leafBase, pal.leafLight)}
+                            ${drawLeafCluster(175, 140, 18, pal.leafShadow, pal.leafBase)}
+                            ${drawLeafCluster(145, 145, 15, pal.leafShadow, pal.leafBase)}
+                        </g>
+                    </g>`;
+            }
+            else if (stage === 3) {
+                // FASE 3: Formación (15-19 días)
+                label = "Creciendo";
+                treeContent += `
+                    <g class="trunk-sway">
+                        <path d="M150 200 C165 180 135 150 150 110" stroke="${pal.trunk}" stroke-width="12" stroke-linecap="round" fill="none"/>
+                        <path d="M148 160 Q120 150 115 130" stroke="${pal.trunk}" stroke-width="6" stroke-linecap="round" fill="none"/>
+                        <path d="M152 140 Q180 130 185 115" stroke="${pal.trunk}" stroke-width="5" stroke-linecap="round" fill="none"/>
+                        <g class="leaf-rustle">
+                            ${drawCloud(150, 110, 30, pal.leafLight)}
+                            ${drawCloud(115, 130, 25, pal.leafBase)}
+                            ${drawCloud(185, 115, 25, pal.leafBase)}
+                            ${drawLeafCluster(130, 120, 15, pal.leafShadow, pal.leafShadow)}
+                        </g>
+                    </g>`;
+            }
+            else if (stage >= 4) {
+                // FASE 4+: Árbol Maduro (20+ días) - Base para fases avanzadas
+                
+                let extraFoliage = '';
+                let flowers = '';
+                let particles = '';
+                let trunkWidth = 16 + (stage * 2); // Engrosa con el tiempo
+                
+                if (stage === 4) label = "Robusto";
+                if (stage === 5) { label = "Frondoso"; extraFoliage = drawCloud(130, 90, 25, pal.leafLight); }
+                if (stage === 6) { 
+                    label = "Floreciendo"; 
+                    extraFoliage = drawCloud(130, 90, 28, pal.leafLight) + drawCloud(170, 80, 25, pal.leafLight);
+                    flowers = drawFlowers([
+                        [150, 70], [120, 100], [180, 95], [200, 120], [100, 125]
+                    ], pal.flower);
+                }
+                if (stage === 7) { 
+                    label = "Legendario";
+                    extraFoliage = drawCloud(130, 90, 30, pal.leafLight) + drawCloud(170, 80, 28, pal.leafLight);
+                    flowers = drawFlowers([
+                        [150, 70], [120, 100], [180, 95], [200, 120], [100, 125], [150, 100], [140, 60]
+                    ], pal.flower);
+                    // Partículas cayendo
+                    for(let i=0; i<8; i++) {
+                        let delay = Math.random() * 4;
+                        let x = 120 + Math.random() * 60;
+                        particles += `<circle cx="${x}" cy="80" r="3" fill="${pal.flower}" class="falling-particle" style="animation-delay: -${delay}s"/>`;
+                    }
+                }
+
+                treeContent += `
+                    <g class="trunk-sway">
+                        <path d="M140 200 Q130 210 120 215" stroke="${pal.trunk}" stroke-width="4" fill="none"/>
+                        <path d="M160 200 Q170 210 180 215" stroke="${pal.trunk}" stroke-width="4" fill="none"/>
+                        
+                        <path d="M150 200 C180 160 120 130 150 70" stroke="${pal.trunk}" stroke-width="${trunkWidth}" stroke-linecap="round" fill="none"/>
+                        <path d="M145 150 Q100 140 95 110" stroke="${pal.trunk}" stroke-width="8" stroke-linecap="round" fill="none"/>
+                        <path d="M155 130 Q200 120 205 100" stroke="${pal.trunk}" stroke-width="7" stroke-linecap="round" fill="none"/>
+                        
+                        <g class="leaf-rustle">
+                            ${drawCloud(150, 70, 40, pal.leafLight)}
+                            ${drawCloud(95, 110, 32, pal.leafBase)}
+                            ${drawCloud(205, 100, 30, pal.leafBase)}
+                            ${extraFoliage}
+                            ${drawCloud(150, 90, 20, pal.leafShadow)}
+                            ${flowers}
+                        </g>
+                    </g>
+                    ${particles}
+                `;
             }
 
-            if (c >= 5) { // FASE 2 MEJORADA
-                levelText.textContent = "Brote";
-                svgContent += `<g class="foliage-sway">`;
-                svgContent += `<path d="M150 200 C155 180 145 160 150 145" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M150 165 Q130 155 125 145" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M150 155 Q170 150 175 140" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
-                svgContent +=drawCloud(150, 140, 18, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(125, 145, 14, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(175, 140, 14, leafColorLight, leafColorDark);
-                 svgContent += `</g>`;
-            }
+            // Actualizar etiqueta
+            if (c === 0) label = "Planta tu semilla";
+            levelText.textContent = label;
 
-            if (c >= 10) { // FASE 3
-                levelText.textContent = "Arbolito";
-                svgContent += `<g class="foliage-sway">`;
-                svgContent += `<path d="M150 200 C155 170 140 150 145 120" stroke="${trunkColor}" stroke-width="7" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M145 150 Q170 140 175 125" stroke="${trunkColor}" stroke-width="3.5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M142 130 Q120 120 115 110" stroke="${trunkColor}" stroke-width="3" stroke-linecap="round" fill="none"/>`;
-                svgContent +=drawCloud(145, 115, 20, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(175, 125, 16, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(115, 110, 14, leafColorLight, leafColorDark);
-                svgContent += `</g>`;
-            }
-
-            if (c >= 15) { // FASE 4
-                levelText.textContent = "Creciendo";
-                svgContent += `<g class="foliage-sway">`;
-                svgContent += `<path d="M150 200 C158 170 135 140 150 100" stroke="${trunkColor}" stroke-width="9" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M148 150 Q180 140 190 120" stroke="${trunkColor}" stroke-width="4.5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M140 130 Q110 120 105 100" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
-                svgContent +=drawCloud(150, 95, 26, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(190, 120, 20, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(105, 100, 19, leafColorLight, leafColorDark);
-                svgContent += `</g>`;
-            }
-
-             if (c >= 20) { // FASE 5
-                levelText.textContent = "Formado";
-                svgContent += `<g class="foliage-sway">`;
-                svgContent += `<path d="M150 200 C165 170 125 140 155 90" stroke="${trunkColor}" stroke-width="11" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M150 160 Q195 150 205 125" stroke="${trunkColor}" stroke-width="5.5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M135 135 Q95 125 90 105" stroke="${trunkColor}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M150 110 Q175 100 180 85" stroke="${trunkColor}" stroke-width="3.5" stroke-linecap="round" fill="none"/>`;
-                svgContent +=drawCloud(155, 85, 29, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(205, 125, 23, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(90, 105, 21, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(180, 85, 17, leafColorLight, leafColorDark);
-                svgContent += `</g>`;
-            }
-
-            if (c >= 25) { // FASE 6
-                levelText.textContent = "Frondoso";
-                svgContent += `<g class="foliage-sway">`;
-                svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M155 100 Q125 90 120 75" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
-                svgContent +=drawCloud(155, 80, 33, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(215, 115, 27, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(75, 95, 24, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(120, 75, 19, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(185, 95, 17, leafColorLight, leafColorDark);
-                svgContent += `</g>`;
-            }
-
-             if (c >= 30) { // FASE 7
-                levelText.textContent = "Capullos";
-                svgContent += `<g class="foliage-sway">`;
-                svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M155 100 Q125 90 120 75" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
-                svgContent +=drawCloud(155, 80, 33, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(215, 115, 27, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(75, 95, 24, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(120, 75, 19, leafColorLight, leafColorDark);
-                svgContent +=drawCloud(185, 95, 17, leafColorLight, leafColorDark);
-                svgContent +=drawBud(145, 70, blossomColor); svgContent +=drawBud(165, 85, blossomColor);
-                svgContent +=drawBud(205, 110, blossomColor); svgContent +=drawBud(225, 120, blossomColor);
-                svgContent +=drawBud(65, 90, blossomColor); svgContent +=drawBud(85, 100, blossomColor);
-                svgContent += `</g>`;
-            }
-
-            if (c >= 35) { // FASE 8
-                levelText.textContent = "Legendario";
-                svgContent += `<g class="foliage-sway">`;
-                svgContent += `<path d="M150 200 C170 170 120 130 155 80" stroke="${trunkColor}" stroke-width="13" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M145 150 Q210 140 215 115" stroke="${trunkColor}" stroke-width="6.5" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M135 130 Q80 120 75 95" stroke="${trunkColor}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
-                svgContent += `<path d="M155 100 Q125 90 120 75" stroke="${trunkColor}" stroke-width="4" stroke-linecap="round" fill="none"/>`;
-                svgContent +=drawCloud(155, 80, 33, blossomColor, blossomCenter);
-                svgContent +=drawCloud(215, 115, 27, blossomColor, blossomCenter);
-                svgContent +=drawCloud(75, 95, 24, blossomColor, blossomCenter);
-                svgContent +=drawCloud(120, 75, 19, blossomColor, blossomCenter);
-                svgContent +=drawCloud(185, 95, 17, blossomColor, blossomCenter);
-                svgContent +=drawSakura(140, 65, blossomColor, blossomCenter, "0.1s"); svgContent +=drawSakura(170, 80, blossomColor, blossomCenter, "0.3s");
-                svgContent +=drawSakura(200, 105, blossomColor, blossomCenter, "0.5s"); svgContent +=drawSakura(230, 125, blossomColor, blossomCenter, "0.7s");
-                svgContent +=drawSakura(60, 85, blossomColor, blossomCenter, "0.2s"); svgContent +=drawSakura(90, 105, blossomColor, blossomCenter, "0.4s");
-                svgContent +=drawSakura(110, 70, blossomColor, blossomCenter, "0.6s"); svgContent +=drawSakura(190, 95, blossomColor, blossomCenter, "0.8s");
-                 svgContent += `</g>`;
-            }
-
-            if(c === 0) levelText.textContent = "Planta tu semilla";
-
-            container.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 300 250" preserveAspectRatio="xMidYMid meet">${svgContent}</svg>`;
+            // Renderizar
+            container.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 300 250" class="overflow-visible">${svgInner}${treeContent}</svg>`;
         }
 
-        // HELPERS SVG
-        function drawCloud(cx, cy, r, fillCol, strokeCol) {
-             let path = `<g>`;
-             path += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fillCol}" stroke="${strokeCol}" stroke-width="0.5"/>`;
-             path += `<circle cx="${cx-r*0.7}" cy="${cy+r*0.3}" r="${r*0.6}" fill="${fillCol}"/>`;
-             path += `<circle cx="${cx+r*0.7}" cy="${cy+r*0.3}" r="${r*0.6}" fill="${fillCol}"/>`;
-             path += `<circle cx="${cx}" cy="${cy-r*0.5}" r="${r*0.7}" fill="${fillCol}"/>`;
-             path += `</g>`;
-             return path;
+        // --- HELPERS BONSÁI ---
+        function drawLeafCluster(cx, cy, size, color1, color2) {
+            return `
+                <circle cx="${cx}" cy="${cy}" r="${size}" fill="${color1}" />
+                <circle cx="${cx - size/3}" cy="${cy - size/3}" r="${size*0.7}" fill="${color2}" />
+                <circle cx="${cx + size/3}" cy="${cy + size/3}" r="${size*0.6}" fill="${color2}" />
+            `;
         }
-        function drawBud(cx, cy, col) {
-            return `<circle cx="${cx}" cy="${cy}" r="3" fill="${col}" stroke="#db2777" stroke-width="0.5"/>`;
+
+        function drawCloud(cx, cy, r, color) {
+            return `
+                <g>
+                    <circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}"/>
+                    <circle cx="${cx - r*0.6}" cy="${cy + r*0.2}" r="${r*0.7}" fill="${color}"/>
+                    <circle cx="${cx + r*0.6}" cy="${cy - r*0.1}" r="${r*0.6}" fill="${color}"/>
+                    <circle cx="${cx}" cy="${cy - r*0.5}" r="${r*0.8}" fill="${color}"/>
+                </g>
+            `;
         }
-        function drawSakura(cx, cy, petalCol, centerCol, delay) {
-            return `<g class="flower-bloom" style="animation-delay:${delay}; transform-origin: ${cx}px ${cy}px;">
-                <circle cx="${cx}" cy="${cy}" r="2.5" fill="${centerCol}"/>
-                <path d="M${cx},${cy-2} Q${cx-4},${cy-8} ${cx},${cy-12} Q${cx+4},${cy-8} ${cx},${cy-2}" fill="${petalCol}" />
-                <path d="M${cx+2},${cy-1} Q${cx+8},${cy-4} ${cx+12},${cy} Q${cx+8},${cy+4} ${cx+2},${cy+1}" fill="${petalCol}" />
-                <path d="M${cx+1},${cy+2} Q${cx+5},${cy+8} ${cx},${cy+12} Q${cx-5},${cy+8} ${cx-1},${cy+2}" fill="${petalCol}" />
-                <path d="M${cx-2},${cy+1} Q${cx-8},${cy+4} ${cx-12},${cy} Q${cx-8},${cy-4} ${cx-2},${cy-1}" fill="${petalCol}" />
-                <path d="M${cx-1},${cy-2} Q${cx-5},${cy-8} ${cx},${cy-10} Q${cx+5},${cy-8} ${cx+1},${cy-2}" fill="${petalCol}" transform="rotate(45, ${cx}, ${cy})"/>
-            </g>`;
+
+        function drawFlowers(coords, color) {
+            return coords.map(pos => 
+                `<circle cx="${pos[0]}" cy="${pos[1]}" r="4" fill="${color}" stroke="#fff" stroke-width="1" class="flower-bloom"/>`
+            ).join('');
         }
 
         // --- BACKUP & RESTORE ---
